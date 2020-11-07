@@ -1,0 +1,55 @@
+name: go2go
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.15
+        
+    - name: Checkout dev.go2go 
+      uses: actions/checkout@v2
+      with:
+        repository: golang/go
+        ref: dev.go2go
+        path: ${{ github.workspace }}/dev.go2go
+      
+    - name: Build dev.go2go
+      run: |
+        cd ${{ github.workspace }}/dev.go2go/src
+        ./make.bash 
+        echo "${{ github.workspace }}/dev.go2go/src/bin" >> $GITHUB_PATH
+        echo "${{ github.workspace }}/go2path/bin" >> $GITHUB_PATH
+
+    - name: Install Taskfile
+      run: |
+        wget https://taskfile.dev/install.sh
+        chmod +x ./install.sh
+        ./install.sh -b ${{ github.workspace }}/go2path/bin
+      
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        path: ./go2path/src/github.com/${{ github.repository }}
+      
+    - name: Test
+      env:
+        GOBIN: ${{ github.workspace }}/dev.go2go/bin/go
+        GOROOT: ${{ github.workspace }}/dev.go2go
+        GOPATH: ${{ github.workspace }}/go2path
+        GO2PATH: ${{ github.workspace }}/go2path
+        GO111MODULE: off
+      run: |
+        cd ./go2path/src/github.com/${{ github.repository }}
+        task test
