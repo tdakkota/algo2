@@ -42,6 +42,9 @@ jobs:
       run: |
         cd ${{ github.workspace }}/dev.go2go/src
         ./make.bash 
+
+    - name: Add go2go to PATH
+      run: |
         echo -e "${{ github.workspace }}/dev.go2go/bin\n$(cat $GITHUB_PATH)" > $GITHUB_PATH
         echo -e "${{ github.workspace }}/go2path/bin\n$(cat $GITHUB_PATH)" > $GITHUB_PATH
 
