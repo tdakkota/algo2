@@ -19,10 +19,6 @@ func TestBinaryTree(t *testing.T) {
 			t.Errorf("unexpectedly found %v in empty map", v)
 		}
 
-		if found := m.Delete(i); found {
-			t.Errorf("succesfully deleted in empty map")
-		}
-
 		m.Put(i, value)
 		if v, _ := m.Get(i); v != value {
 			t.Errorf("expected %v, got %v", value, v)
@@ -60,25 +56,5 @@ func TestBinaryTree(t *testing.T) {
 	})
 	if !slices.Equal(values, r) {
 		t.Errorf("tree values %q should be equal to %q", r, values)
-	}
-
-	for i := range values {
-		if found := m.Delete(i); !found {
-			t.Errorf("unexpectedly not found when delete")
-		}
-
-		_, found := m.Get(i)
-		if found {
-			t.Errorf("expected delete value is not found")
-		}
-	}
-
-	var i int
-	m.Iterate(func(p alg.Pair[int, int]) bool {
-		i++
-		return true
-	})
-	if i != 0 {
-		t.Errorf("tree should be empty")
 	}
 }

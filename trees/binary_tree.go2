@@ -35,45 +35,6 @@ func (m *btnode[K, V]) traverse(cb func(alg.Pair[K, V]) bool) (_ bool) {
 	return true
 }
 
-func (n *btnode[K, V]) max(parent *btnode[K, V]) (*btnode[K, V], *btnode[K, V]) {
-	if n == nil {
-		return nil, parent
-	}
-	if n.right == nil {
-		return n, parent
-	}
-	return n.right.max(n)
-}
-
-func (n *btnode[K, V]) replaceNode(parent, replacement *btnode[K, V]) {
-	if n == parent.left {
-		parent.left = replacement
-	} else {
-		parent.left = replacement
-	}
-}
-
-func (n *btnode[K, V]) Delete(k K, parent *btnode[K, V]) {
-	switch {
-	case k < n.key:
-		n.left.Delete(k, n)
-	case k > n.key:
-		n.right.Delete(k, n)
-	case n.left == nil && n.right == nil: 	
-		n.replaceNode(parent, nil)
-	case n.left == nil: 
-		n.replaceNode(parent, n.right)
-	case n.right == nil:	 	
-		n.replaceNode(parent, n.left)
-	default:
-		r, parent := n.left.max(n)
-		n.key = r.key
-		n.value = r.value
-
-		r.Delete(r.key, parent)
-	}
-}
-
 func (m *BinaryTree[K, V]) find(key K) **btnode[K, V] {
 	pn := &m.root
 	for *pn != nil {
@@ -109,17 +70,6 @@ func (m *BinaryTree[K, V]) Get(key K) (v V, ok bool) {
 	}
 	return (*pn).value, true
 }
-
-func (m *BinaryTree[K, V]) Delete(key K) (_ bool) {
-	if m.root == nil {
-		return 
-	}
-	fakeParent := &btnode[K, V]{right: m.root}
-	m.root.Delete(key, fakeParent)
-	return true
-}
-
-
 
 func (m *BinaryTree[K, V]) Iterate(cb func(alg.Pair[K, V]) bool) {
 	if m.root != nil {
