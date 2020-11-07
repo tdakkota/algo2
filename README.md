@@ -1,5 +1,7 @@
 # algo2 ![go2go](https://github.com/tdakkota/algo2/workflows/go2go/badge.svg)
-Some algorithms written using go2go.
+Algorithms written in Go2. 
+
+Some packages are ported from [go2go testdata](https://github.com/golang/go/tree/dev.go2go/src/cmd/go2go/testdata/go2path/src).
 
 # Installation 
 ### Requirements
