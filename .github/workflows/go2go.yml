@@ -29,8 +29,8 @@ jobs:
       run: |
         cd ${{ github.workspace }}/dev.go2go/src
         ./make.bash 
-        echo "${{ github.workspace }}/dev.go2go/src/bin" >> $GITHUB_PATH
-        echo "${{ github.workspace }}/go2path/bin" >> $GITHUB_PATH
+        echo -e "${{ github.workspace }}/dev.go2go/bin\n$(cat $GITHUB_PATH)" > $GITHUB_PATH
+        echo -e "${{ github.workspace }}/go2path/bin\n$(cat $GITHUB_PATH)" > $GITHUB_PATH
 
     - name: Install Taskfile
       run: |
@@ -45,7 +45,6 @@ jobs:
       
     - name: Test
       env:
-        GOBIN: ${{ github.workspace }}/dev.go2go/bin/go
         GOROOT: ${{ github.workspace }}/dev.go2go
         GOPATH: ${{ github.workspace }}/go2path
         GO2PATH: ${{ github.workspace }}/go2path

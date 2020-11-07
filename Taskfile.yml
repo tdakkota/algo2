@@ -2,6 +2,9 @@
 
 version: '3'
 
+env:
+  GOBIN: go
+
 vars:
   PACKAGES: | 
     alg
@@ -17,8 +20,8 @@ tasks:
       - ignore_error: true
         cmd : |
           {{range $i, $line := .PACKAGES | splitLines }}{{ if $line -}} 
-          go tool go2go translate ./{{ $line }}/{{ $line }}.go2
-          go tool go2go translate ./{{ $line }}
+          $GOBIN tool go2go translate ./{{ $line }}/{{ $line }}.go2
+          $GOBIN tool go2go translate github.com/tdakkota/algo2/{{ $line }}
           {{ end }}{{ end -}}
 
   clean:
@@ -32,4 +35,5 @@ tasks:
   test:
     deps: [translate]
     cmds:
-      - go test -race ./...
+      - | 
+        $GOBIN test -race ./...
