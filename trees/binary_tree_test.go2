@@ -1,0 +1,84 @@
+package trees
+
+import (
+	"testing"
+
+	"github.com/tdakkota/algo2/alg"
+	"github.com/tdakkota/algo2/slices"
+)
+
+func TestBinaryTree(t *testing.T) {
+	const sizeTest = 5
+	m := &BinaryTree[int, int]{}
+	values := slices.RepeatFn(func(i int) int {
+		return i
+	}, sizeTest)
+
+	for i, value := range values {
+		if v, found:= m.Get(i); found {
+			t.Errorf("unexpectedly found %v in empty map", v)
+		}
+
+		if found := m.Delete(i); found {
+			t.Errorf("succesfully deleted in empty map")
+		}
+
+		m.Put(i, value)
+		if v, _ := m.Get(i); v != value {
+			t.Errorf("expected %v, got %v", value, v)
+		}
+	}
+
+	r := make([]int, sizeTest)
+	m.Iterate(func(p alg.Pair[int, int]) bool {
+		r[p.L] = p.R
+		return true
+	})
+	if !slices.Equal(values, r) {
+		t.Errorf("tree values %q should be equal to %q", r, values)
+	}
+
+	for i, value := range values {
+		if v, found := m.Get(i); !found {
+			t.Errorf("unexpectedly not found %v", v)
+		}
+	
+		m.Put(i, value)
+		v, found := m.Get(i)
+		if !found {
+			t.Errorf("expected value is found")
+		}
+		if v != value {
+			t.Errorf("expected %v, got %v", value, v)
+		} 
+	}
+
+	r = make([]int, sizeTest)
+	m.Iterate(func(p alg.Pair[int, int]) bool {
+		r[p.L] = p.R
+		return true
+	})
+	if !slices.Equal(values, r) {
+		t.Errorf("tree values %q should be equal to %q", r, values)
+	}
+
+	for i := range values {
+		if found := m.Delete(i); !found {
+			t.Errorf("unexpectedly not found when delete")
+		}
+
+		_, found := m.Get(i)
+		if found {
+			t.Errorf("expected delete value is not found")
+		}
+	}
+
+	var i int
+	m.Iterate(func(p alg.Pair[int, int]) bool {
+		i++
+		return true
+	})
+	if i != 0 {
+		t.Errorf("tree should be empty")
+	}
+}

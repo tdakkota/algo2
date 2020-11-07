@@ -1,0 +1,45 @@
+// Copyright 2020 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+// Package alg provides basic algorithms.
+package alg
+
+import "github.com/tdakkota/algo2/constraints"
+
+// Max returns the maximum of two values of some ordered type.
+func Max[T constraints.Ordered](a, b T) T {
+	if Lt(a, b) {
+		return b
+	}
+	return a
+}
+
+// Min returns the minimum of two values of some ordered type.
+func Min[T constraints.Ordered](a, b T) T {
+	if Lt(a, b) {
+		return a
+	}
+	return b
+}
+
+func Gt[T constraints.Ordered](a, b T) bool {
+	return a > b
+}
+
+func Lt[T constraints.Ordered](a, b T) bool {
+	return a < b
+}
+
+func Zero[T any]() (_ T) { return }
+
+func IsZero[T comparable](t T) bool {
+	// check is equal to zero and it is not a NaN
+	return t == Zero[T]() && t == t
+}
+
+type Pair[L, R any] struct{L; R}
+
+func Two[L, R any](l L, r R) Pair[L, R] {
+	return Pair[L, R]{l, r}
+}

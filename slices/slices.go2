@@ -1,0 +1,55 @@
+package slices
+
+func Repeat[T any](value T, count int) []T {
+	switch {
+	case count == 0:
+		return []T{}
+	case count == 1:
+		return []T{value}
+	case count < 0 :
+		panic("negative Repeat count")
+	}
+
+	nb := make([]T, count)
+	bp := copy(nb, []T{value, value})
+	for bp < len(nb) {
+		copy(nb[bp:], nb[:bp])
+		bp *= 2
+	}
+	return nb
+}
+
+func RepeatFn[T any](fn func(int) T, count int) []T {
+	switch {
+	case count == 0:
+		return []T{}
+	case count == 1:
+		return []T{fn(0)}
+	case count < 0 :
+		panic("negative Repeat count")
+	}
+
+	nb := make([]T, count)
+	for i := range nb {
+		nb[i] = fn(i)
+	}
+	return nb
+}
+
+// Equal reports whether two slices are equal: the same length and all
+// elements equal. All floating point NaNs are considered equal.
+func Equal[T comparable](s1, s2 []T) bool {
+	if len(s1) != len(s2) {
+			return false
+	}
+	for i, v1 := range s1 {
+			v2 := s2[i]
+			if v1 != v2 {
+					isNaN := func(f T) bool { return f != f }
+					if !isNaN(v1) || !isNaN(v2) {
+							return false
+					}
+			}
+	}
+	return true
+}

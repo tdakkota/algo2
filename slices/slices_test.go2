@@ -1,0 +1,88 @@
+package slices
+
+import (
+	"fmt"
+	"math"
+	"testing"
+)
+
+func TestRepeat(t *testing.T) {
+	tests := []struct{
+		count int
+		value int
+	}{
+		{0, 1},
+		{1, 1},
+		{2, 1},
+		{1023, 0},
+		{1023, 1},
+	}
+
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("Test repeat %d %d times", test.value, test.count), func(t *testing.T){
+			a := Repeat[int](test.value, test.count)
+			if len(a) != test.count {
+				t.Errorf("len(Repeat(%v, %v)) != %v, but expected equal", test.value, test.count, test.count)
+			}
+			if !Equal(a, Repeat[int](test.value, test.count)) {
+				t.Errorf("Repeat(%v, %v) != Repeat(%v, %v), but expected equal", test.value, test.count, test.value, test.count)
+			}
+		})
+	}
+}
+
+func TestRepeatFn(t *testing.T) {
+	fn := func(i int) int { return i }
+	tests := []struct{
+		count int
+		value func(int) int
+	}{
+		{0, fn},
+		{1, fn},
+		{2, fn},
+		{2, func(i int) int { return 1 }},
+		{1023, fn},
+	}
+
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("Test repeat function %d times", test.count), func(t *testing.T){
+			a := RepeatFn[int](test.value, test.count)
+			if len(a) != test.count {
+				t.Errorf("len(RepeatFn(fn, %v)) != %v, but expected equal", test.count, test.count)
+			}
+			if !Equal(a, RepeatFn[int](test.value, test.count)) {
+				t.Errorf("RepeatFn(a, b) != RepeatFn(a, b), but expected equal")
+			}
+		})
+	}
+}
+
+func TestEqual(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	if !Equal(s1, s1) {
+			t.Errorf("Equal(%v, %v) = false, want true", s1, s1)
+	}
+	s2 := []int{1, 2, 3}
+	if !Equal(s1, s2) {
+			t.Errorf("Equal(%v, %v) = false, want true", s1, s2)
+	}
+	s2 = append(s2, 4)
+	if Equal(s1, s2) {
+			t.Errorf("Equal(%v, %v) = true, want false", s1, s2)
+	}
+
+	s3 := []float64{1, 2, math.NaN()}
+	if !Equal(s3, s3) {
+			t.Errorf("Equal(%v, %v) = false, want true", s3, s3)
+	}
+
+	if Equal(s1, nil) {
+			t.Errorf("Equal(%v, nil) = true, want false", s1)
+	}
+	if Equal(nil, s1) {
+			t.Errorf("Equal(nil, %v) = true, want false", s1)
+	}
+	if !Equal(s1[:0], nil) {
+			t.Errorf("Equal(%v, nil = false, want true", s1[:0])
+	}
+}

@@ -1,0 +1,35 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  PACKAGES: | 
+    alg
+    cache
+    constraints
+    list
+    slices
+    trees
+
+tasks:
+  translate:
+    cmds:
+      - ignore_error: true
+        cmd : |
+          {{range $i, $line := .PACKAGES | splitLines }}{{ if $line -}} 
+          go tool go2go translate ./{{ $line }}/{{ $line }}.go2
+          go tool go2go translate ./{{ $line }}
+          {{ end }}{{ end -}}
+
+  clean:
+    cmds:
+      - ignore_error: true
+        cmd : |
+          {{range $i, $line := .PACKAGES | splitLines }} {{ if $line -}} 
+          rm ./{{ $line }}/*.go
+          {{ end }}{{ end -}}
+
+  test:
+    deps: [translate]
+    cmds:
+      - go test -race ./...
