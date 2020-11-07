@@ -13,6 +13,7 @@ vars:
     list
     slices
     trees
+    testutil
 
 tasks:
   translate:

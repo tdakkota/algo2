@@ -5,34 +5,35 @@ import (
 	"github.com/tdakkota/algo2/constraints"
 )
 
+// BinaryTree represents the binary search tree.
 type BinaryTree[K constraints.Ordered, V any] struct {
 	root *btnode[K, V]
+	size int 
 }
 
 func NewBinaryTree[K constraints.Ordered, V any]() *BinaryTree[K, V] {
 	return new(BinaryTree[K, V])
 }
 
-type btnode[K constraints.Ordered, V any] struct {
-	key K
-	value V
-	left, right *btnode[K, V]
+// Min returns the minimal element.
+func (m *BinaryTree[K, V]) Min() (v alg.Pair[K, V], ok bool) {
+	if min := m.root.min(); min != nil {
+		return alg.Two(min.key, min.value), true
+	}
+	return
 }
 
-func (m *btnode[K, V]) traverse(cb func(alg.Pair[K, V]) bool) (_ bool) {
-	if m.left != nil && !m.left.traverse(cb) {
-		return
+// Max returns the maximal element.
+func (m *BinaryTree[K, V]) Max() (v alg.Pair[K, V], ok bool) {
+	if max := m.root.max(); max != nil {
+		return alg.Two(max.key, max.value), true
 	}
-	
-	if !cb(alg.Two(m.key, m.value)) {
-		return
-	}
+	return
+}
 
-	if m.right != nil && !m.right.traverse(cb) {
-		return
-	}
-
-	return true
+// Len returns size of tree.
+func (m *BinaryTree[K, V]) Len() int {
+	return m.size
 }
 
 func (m *BinaryTree[K, V]) find(key K) **btnode[K, V] {
@@ -53,6 +54,7 @@ func (m *BinaryTree[K, V]) find(key K) **btnode[K, V] {
 // Put inserts a new key/value into the map.
 // If the key is already present, the value is replaced.
 func (m *BinaryTree[K, V]) Put(key K, val V) {
+	m.size++
 	pn := m.find(key)
 	if *pn != nil {
 			(*pn).value = val
@@ -71,8 +73,54 @@ func (m *BinaryTree[K, V]) Get(key K) (v V, ok bool) {
 	return (*pn).value, true
 }
 
-func (m *BinaryTree[K, V]) Iterate(cb func(alg.Pair[K, V]) bool) {
-	if m.root != nil {
-		m.root.traverse(cb)
+func (m *BinaryTree[K, V]) delete(key K) (_ bool) {
+	if m.root == nil {
+		return 
 	}
+
+	if m.root.key == key {
+		tempRoot := &btnode[K, V]{}
+		tempRoot.left = m.root
+		r := m.root.del(tempRoot, key)
+		m.root = tempRoot.left
+		return r
+	}
+	return m.root.left.del(m.root, key) || m.root.right.del(m.root, key)
+}
+
+// Delete removes node with given key from tree and returns true if 
+// deletion is successful.
+func (m *BinaryTree[K, V]) Delete(key K) (ok bool) {
+	ok = m.delete(key)
+	if ok {
+		m.size--
+	}
+	return
+}
+
+// Iterate traverse tree in order using given callback.
+func (m *BinaryTree[K, V]) iterate(o order, cb func(alg.Pair[K, V]) bool) {
+	if m.root != nil {
+		m.root.traverse(o, cb)
+	}
+}
+
+// Iterate traverse tree in order using given callback.
+func (m *BinaryTree[K, V]) Iterate(cb func(alg.Pair[K, V]) bool) {
+	m.IterateInOrder(cb)
+}
+
+// IterateInOrder traverse tree in order using given callback.
+func (m *BinaryTree[K, V]) IterateInOrder(cb func(alg.Pair[K, V]) bool) {
+	m.iterate(inOrder, cb)
+}
+
+// IterateInOrder traverse tree in pre-order using given callback.
+func (m *BinaryTree[K, V]) IteratePreOrder(cb func(alg.Pair[K, V]) bool) {
+	m.iterate(preOrder, cb)
+}
+
+// IterateInOrder traverse tree in post-order using given callback.
+func (m *BinaryTree[K, V]) IteratePostOrder(cb func(alg.Pair[K, V]) bool) {
+	m.iterate(postOrder, cb)
 }
