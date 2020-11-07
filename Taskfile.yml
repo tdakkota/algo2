@@ -7,7 +7,7 @@ env:
   GO2GOTOOL: go tool go2go
 
 vars:
-  GOFLAGS: -race
+  GOFLAGS: -race -coverprofile=coverage.txt -covermode=atomic
   PACKAGES: | 
     alg
     cache

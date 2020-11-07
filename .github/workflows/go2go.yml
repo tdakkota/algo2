@@ -25,7 +25,18 @@ jobs:
         ref: dev.go2go
         path: ${{ github.workspace }}/dev.go2go
       
+    - name: Get lastest dev.go2go commit hash
+      run: echo -e "go2go_commit_hash=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+    - name: Cache dev.go2go build
+      id: cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/dev.go2go
+        key: ${{ runner.os }}-${{ env.go2go_commit_hash }}
+      
     - name: Build dev.go2go
+      if: steps.cache.outputs.cache-hit != 'true'
       run: |
         cd ${{ github.workspace }}/dev.go2go/src
         ./make.bash 
@@ -52,3 +63,6 @@ jobs:
       run: |
         cd ./go2path/src/github.com/${{ github.repository }}
         task test
+
+    - name: Upload coverage to Codecov  
+      uses: codecov/codecov-action@v1
