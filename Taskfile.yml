@@ -4,8 +4,10 @@ version: '3'
 
 env:
   GOBIN: go
+  GO2GOTOOL: go tool go2go
 
 vars:
+  GOFLAGS: -race
   PACKAGES: | 
     alg
     cache
@@ -16,13 +18,18 @@ vars:
     testutil
 
 tasks:
+  default:
+    deps: [test]
+
   translate:
     cmds:
       - ignore_error: true
         cmd : |
+          {{ $go_bin := default "go" .GOBIN -}}
+          {{ $tool := default (cat $go_bin "tool go2go") .GO2GOTOOL -}}
           {{range $i, $line := .PACKAGES | splitLines }}{{ if $line -}} 
-          $GOBIN tool go2go translate ./{{ $line }}/{{ $line }}.go2
-          $GOBIN tool go2go translate github.com/tdakkota/algo2/{{ $line }}
+          {{ $tool }} translate ./{{ $line }}/{{ $line }}.go2
+          {{ $tool }} translate github.com/tdakkota/algo2/{{ $line }}
           {{ end }}{{ end -}}
 
   clean:
@@ -37,4 +44,4 @@ tasks:
     deps: [translate]
     cmds:
       - | 
-        $GOBIN test -race ./...
+        {{ default "go" .GOBIN }} test {{ .GOFLAGS }} ./...
