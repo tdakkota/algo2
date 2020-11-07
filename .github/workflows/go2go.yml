@@ -26,7 +26,9 @@ jobs:
         path: ${{ github.workspace }}/dev.go2go
       
     - name: Get lastest dev.go2go commit hash
-      run: echo -e "go2go_commit_hash=$(git rev-parse HEAD)" >> $GITHUB_ENV
+      run: |
+        cd ${{ github.workspace }}/dev.go2go/src  
+        echo -e "go2go_commit_hash=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
     - name: Cache dev.go2go build
       id: cache
