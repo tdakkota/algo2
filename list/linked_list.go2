@@ -242,11 +242,36 @@ func (l *LinkedList[TElem]) PushFrontList(other *LinkedList[TElem]) {
 	}
 }
 
-// Transform runs a transform function on a list returning a new list.
-func Transform[TElem1, TElem2 any](lst *LinkedList[TElem1], f func(TElem1) TElem2) *LinkedList[TElem2] {
-	ret := NewLinkedList[TElem2]()
-	for p := lst.Front(); p != nil; p = p.Next() {
-		ret.PushBack(f(p.Value))
+// Same as PushFront.
+func (l *LinkedList[TElem]) Prepend(e ...TElem) {
+	for _, v := range e {
+		l.PushFront(v)
 	}
-	return ret
+}
+
+// Same as PushBack.
+func (l *LinkedList[TElem]) Append(e ...TElem) {
+	for _, v := range e {
+		l.PushBack(v)
+	}
+}
+
+// Deletes and returns first element.
+func (l *LinkedList[TElem]) PopFront() (v TElem, ok bool) {
+	if e := l.Front(); e != nil {
+		l.Remove(e)
+		return e.Value, true
+	}
+
+	return
+}
+
+// Deletes and returns last element.
+func (l *LinkedList[TElem]) Pop() (v TElem, ok bool) {
+	if e := l.Back(); e != nil {
+		l.Remove(e)
+		return e.Value, true
+	}
+
+	return
 }

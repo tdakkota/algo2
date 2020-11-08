@@ -5,7 +5,6 @@
 package list
 
 import (
-	"strconv"
 	"testing"
 )
 
@@ -342,13 +341,4 @@ func TestMoveUnknownMark(t *testing.T) {
 	l1.MoveBefore(e1, e2)
 	checkList(t, &l1, []interface{}{1})
 	checkList(t, &l2, []interface{}{2})
-}
-
-// Test the Transform function.
-func TestTransform(t *testing.T) {
-	l1 := NewLinkedList[int]()
-	l1.PushBack(1)
-	l1.PushBack(2)
-	l2 := Transform(l1, strconv.Itoa)
-	checkList(t, l2, []interface{}{"1", "2"})
 }
