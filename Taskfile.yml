@@ -23,8 +23,7 @@ tasks:
 
   translate:
     cmds:
-      - ignore_error: true
-        cmd : |
+      - cmd : |
           {{ $go_bin := default "go" .GOBIN -}}
           {{ $tool := default (cat $go_bin "tool go2go") .GO2GOTOOL -}}
           {{range $i, $line := .PACKAGES | splitLines }}{{ if $line -}} 
