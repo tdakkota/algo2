@@ -15,7 +15,7 @@ func (f IteratorFunc[T]) Iterate(fn func(T) bool) {
 }
 
 func KeyIterator(i Iterator[alg.Pair[L, R]]) Iterator[L] {
-	return IteratorFunc(func(cb func(L) bool)) {
+	return IteratorFunc(func(cb func(L) bool) {
 		i.Iterate(func(p alg.Pair[L, R]) bool {
 			return cb(p.L)
 		}))
@@ -23,7 +23,7 @@ func KeyIterator(i Iterator[alg.Pair[L, R]]) Iterator[L] {
 }
 
 func ValueIterator(i Iterator[alg.Pair[L, R]]) Iterator[R] {
-	return IteratorFunc(func(cb func(R) bool)) {
+	return IteratorFunc(func(cb func(R) bool) {
 		i.Iterate(func(p alg.Pair[L, R]) bool {
 			return cb(p.R)
 		}))
