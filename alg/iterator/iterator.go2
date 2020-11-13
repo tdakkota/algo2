@@ -1,0 +1,35 @@
+package iterator
+
+import (
+	"github.com/tdakkota/algo2/alg"
+)
+
+type Iterator[T any] interface {
+	Iterate(fn func(T) bool)
+}
+
+type IteratorFunc[T] func(fn func(T) bool)
+
+func (f IteratorFunc[T]) Iterate(fn func(T) bool) {
+	f(fn)
+}
+
+func KeyIterator(i Iterator[alg.Pair[L, R]]) Iterator[L] {
+	return IteratorFunc(func(cb func(L) bool)) {
+		i.Iterate(func(p alg.Pair[L, R]) bool {
+			return cb(p.L)
+		}))
+	}
+}
+
+func ValueIterator(i Iterator[alg.Pair[L, R]]) Iterator[R] {
+	return IteratorFunc(func(cb func(R) bool)) {
+		i.Iterate(func(p alg.Pair[L, R]) bool {
+			return cb(p.R)
+		}))
+	}
+}
+
+type OrderedIterator[T any] interface {
+	IterateInOrder(fn func(T) bool)
+}
