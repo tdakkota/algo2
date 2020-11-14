@@ -28,9 +28,10 @@ tasks:
           {{ $go_bin := default "go" .GOBIN -}}
           {{ $tool := default (cat $go_bin "tool go2go") .GO2GOTOOL -}}
           {{range $i, $line := .PACKAGES | splitLines }}{{ if $line -}} 
-          {{ $tool }} translate ./{{ $line }}/{{ $line }}.go2
-          {{ $tool }} translate github.com/tdakkota/algo2/{{ $line }}
+          {{ $tool }} translate ./{{ $line }}/{{ $line }}.go2 &&
+          {{ $tool }} translate github.com/tdakkota/algo2/{{ $line }} &&
           {{ end }}{{ end -}}
+          echo "complete!"
 
   clean:
     cmds:
