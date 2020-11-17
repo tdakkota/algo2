@@ -6,6 +6,8 @@ package list
 
 import (
 	"testing"
+	
+	"github.com/tdakkota/algo2/allocator"
 )
 
 func checkListLen[TElem any](t *testing.T, l *LinkedList[TElem], len int) bool {
@@ -341,4 +343,28 @@ func TestMoveUnknownMark(t *testing.T) {
 	l1.MoveBefore(e1, e2)
 	checkList(t, &l1, []interface{}{1})
 	checkList(t, &l2, []interface{}{2})
+}
+
+func BenchmarkLinkedListGC(b *testing.B) {
+	b.ReportAllocs()
+
+	l := NewLinkedList[int]()
+	l.Init()
+
+	for i := 0; i < b.N; i++ {
+		l.PushFront(i)
+	}
+}
+
+func BenchmarkLinkedListArena(b *testing.B) {
+	b.ReportAllocs()
+
+	arena := allocator.NewArena[Element[int]](b.N + 1)
+	l := NewLinkedList[int]()
+	l.SetAllocator(arena)
+	l.Init()
+
+	for i := 0; i < b.N; i++ {
+		l.PushFront(i)
+	}
 }

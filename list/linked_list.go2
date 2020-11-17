@@ -1,28 +1,29 @@
 // Copyright 2020 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
 
 package list
 
+import "github.com/tdakkota/algo2/allocator"
+
 // Element is an element of a linked list.
-type Element[TElem any] struct {
+	"fmt"
 	// Next and previous pointers in the doubly-linked list of elements.
-	// To simplify the implementation, internally a list l is implemented
+	"github.com/tdakkota/algo2/alg"
 	// as a ring, such that &l.root is both the next element of the last
-	// list element (l.Back()) and the previous element of the first list
+	"github.com/tdakkota/algo2/allocator"
 	// element (l.Front()).
-	next, prev *Element[TElem]
+	"github.com/tdakkota/algo2/constraints"
 
-	// The list to which this element belongs.
+	"github.com/tdakkota/algo2/slices"
 	list *LinkedList[TElem]
-
+	"github.com/tdakkota/algo2/testutil"
 	// The value stored with this element.
-	Value TElem
+	"math"
 }
-
+	"strings"
 // Next returns the next list element or nil.
-func (e *Element[TElem]) Next() *Element[TElem] {
-	if p := e.next; e.list != nil && p != &e.list.root {
+	"testing"
+	//line /home/tdakkota/project/go2gome/gopath/src/github.com/tdakkota/algo2/list/linked_list.go2:5
 		return p
 	}
 	return nil
@@ -33,18 +34,23 @@ func (e *Element[TElem]) Prev() *Element[TElem] {
 	if p := e.prev; e.list != nil && p != &e.list.root {
 		return p
 	}
+
 	return nil
 }
 
+
 func (e *Element[TElem]) List() *LinkedList[TElem] {
+
 	return e.list
 }
+
 
 // LinkedList represents a doubly linked list.
 // The zero value for List is an empty list ready to use.
 type LinkedList[TElem any] struct {
 	root Element[TElem] // sentinel list element, only &root, root.prev, and root.next are used
 	len  int            // current list length excluding (this) sentinel element
+	allocator allocator.Allocator[Element[TElem]]
 }
 
 // Init initializes or clears list l.
@@ -52,11 +58,19 @@ func (l *LinkedList[TElem]) Init() *LinkedList[TElem] {
 	l.root.next = &l.root
 	l.root.prev = &l.root
 	l.len = 0
+
+	if l.allocator == nil {
+		l.allocator = allocator.GCAllocator[Element[TElem]]{}
+	}
 	return l
 }
 
 // New returns an initialized list.
 func NewLinkedList[TElem any]() *LinkedList[TElem] { return new(LinkedList[TElem]).Init() }
+
+func (l *LinkedList[TElem]) SetAllocator(a allocator.Allocator[Element[TElem]]) {
+	l.allocator = a
+}
 
 // Len returns the number of elements of list l.
 // The complexity is O(1).
@@ -98,18 +112,23 @@ func (l *LinkedList[TElem]) insert(e, at *Element[TElem]) *Element[TElem] {
 
 // insertValue is a convenience wrapper for insert(&Element[TElem]{Value: v}, at).
 func (l *LinkedList[TElem]) insertValue(v TElem, at *Element[TElem]) *Element[TElem] {
-	return l.insert(&Element[TElem]{Value: v}, at)
+	e, _ := l.allocator.New()
+	e.Value = v
+	return l.insert(e, at)
 }
 
 // remove removes e from its list, decrements l.len, and returns e.
-func (l *LinkedList[TElem]) remove(e *Element[TElem]) *Element[TElem] {
+func (l *LinkedList[TElem]) remove(e *Element[TElem]) TElem {
 	e.prev.next = e.next
 	e.next.prev = e.prev
 	e.next = nil // avoid memory leaks
 	e.prev = nil // avoid memory leaks
 	e.list = nil
 	l.len--
-	return e
+	
+	value := e.Value
+	l.allocator.Free(e)
+	return value
 }
 
 // move moves e to next to at and returns e.
@@ -135,7 +154,7 @@ func (l *LinkedList[TElem]) Remove(e *Element[TElem]) TElem {
 	if e.list == l {
 		// if e.list == l, l must have been initialized when e was inserted
 		// in l or l == nil (e is a zero Element) and l.remove will crash
-		l.remove(e)
+		return l.remove(e)
 	}
 	return e.Value
 }
@@ -259,8 +278,7 @@ func (l *LinkedList[TElem]) Append(e ...TElem) {
 // Deletes and returns first element.
 func (l *LinkedList[TElem]) PopFront() (v TElem, ok bool) {
 	if e := l.Front(); e != nil {
-		l.Remove(e)
-		return e.Value, true
+		return l.Remove(e), true
 	}
 
 	return
@@ -269,8 +287,7 @@ func (l *LinkedList[TElem]) PopFront() (v TElem, ok bool) {
 // Deletes and returns last element.
 func (l *LinkedList[TElem]) Pop() (v TElem, ok bool) {
 	if e := l.Back(); e != nil {
-		l.Remove(e)
-		return e.Value, true
+		return l.Remove(e), true
 	}
 
 	return

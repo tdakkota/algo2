@@ -47,3 +47,9 @@ tasks:
     cmds:
       - | 
         {{ default "go" .GOBIN }} test {{ .GOFLAGS }} ./...
+
+  bench:
+    deps: [translate]
+    cmds:
+      - | 
+        {{ default "go" .GOBIN }} test -bench=. {{ .GOFLAGS }} ./...

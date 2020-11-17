@@ -12,3 +12,7 @@ func (GCAllocator[T]) New() (*T, bool) {
 }
 
 func (GCAllocator[T]) Free(p *T) {}
+
+func Default[T any]() Allocator[T] {
+	return GCAllocator[T]{}
+}
