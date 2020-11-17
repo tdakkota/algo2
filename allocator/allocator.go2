@@ -1,0 +1,14 @@
+package allocator
+
+type Allocator[T any] interface {
+	New() (*T, bool)
+	Free(*T)
+}
+
+type GCAllocator[T any] struct{}
+
+func (GCAllocator[T]) New() (*T, bool) {
+	return new(T), true
+}
+
+func (GCAllocator[T]) Free(p *T) {}

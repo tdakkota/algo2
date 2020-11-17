@@ -1,0 +1,29 @@
+package allocator
+
+type ArenaAllocator[T any] struct {
+	index int
+	arena []T
+}
+
+func NewArena[T any](size int) ArenaAllocator[T] {
+	return ArenaAllocator[T]{
+		arena: make([]T, size),
+	}
+}
+
+func (a ArenaAllocator[T]) Len() int {
+	return len(a.arena)
+}
+
+func (a ArenaAllocator[T]) Used() int {
+	return a.index
+}
+
+func (a ArenaAllocator[T]) New() (*T, bool) {
+	e := &a.arena[a.index]
+	a.index++
+	return e, true
+}
+
+func (a ArenaAllocator[T]) Free(p *T) {
+}

@@ -10,6 +10,7 @@ vars:
   GOFLAGS: -race -coverprofile=coverage.txt -covermode=atomic
   PACKAGES: | 
     alg
+    allocator
     iterator
     cache
     constraints
