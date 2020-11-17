@@ -1,29 +1,30 @@
 // Copyright 2020 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 
 package list
 
 import "github.com/tdakkota/algo2/allocator"
 
 // Element is an element of a linked list.
-	"fmt"
+type Element[TElem any] struct {
 	// Next and previous pointers in the doubly-linked list of elements.
-	"github.com/tdakkota/algo2/alg"
+	// To simplify the implementation, internally a list l is implemented
 	// as a ring, such that &l.root is both the next element of the last
-	"github.com/tdakkota/algo2/allocator"
+	// list element (l.Back()) and the previous element of the first list
 	// element (l.Front()).
-	"github.com/tdakkota/algo2/constraints"
+	next, prev *Element[TElem]
 
-	"github.com/tdakkota/algo2/slices"
+	// The list to which this element belongs.
 	list *LinkedList[TElem]
-	"github.com/tdakkota/algo2/testutil"
+
 	// The value stored with this element.
-	"math"
+	Value TElem
 }
-	"strings"
+
 // Next returns the next list element or nil.
-	"testing"
-	//line /home/tdakkota/project/go2gome/gopath/src/github.com/tdakkota/algo2/list/linked_list.go2:5
+func (e *Element[TElem]) Next() *Element[TElem] {
+	if p := e.next; e.list != nil && p != &e.list.root {
 		return p
 	}
 	return nil
@@ -34,16 +35,12 @@ func (e *Element[TElem]) Prev() *Element[TElem] {
 	if p := e.prev; e.list != nil && p != &e.list.root {
 		return p
 	}
-
 	return nil
 }
 
-
 func (e *Element[TElem]) List() *LinkedList[TElem] {
-
 	return e.list
 }
-
 
 // LinkedList represents a doubly linked list.
 // The zero value for List is an empty list ready to use.

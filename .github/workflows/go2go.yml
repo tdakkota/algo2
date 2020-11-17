@@ -59,7 +59,7 @@ jobs:
       with:
         path: ./go2path/src/github.com/${{ github.repository }}
       
-    - name: Test
+    - name: Test and bench
       env:
         GOROOT: ${{ github.workspace }}/dev.go2go
         GOPATH: ${{ github.workspace }}/go2path
@@ -68,6 +68,7 @@ jobs:
       run: |
         cd ./go2path/src/github.com/${{ github.repository }}
         task test
+        task bench
 
     - name: Upload coverage to Codecov  
       uses: codecov/codecov-action@v1
