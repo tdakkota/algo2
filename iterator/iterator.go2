@@ -40,5 +40,6 @@ func Empty[T any]() Iterator[T] {
 }
 
 type OrderedIterator[T any] interface {
+	Iterator[T]
 	IterateInOrder(fn func(T) bool)
 }
