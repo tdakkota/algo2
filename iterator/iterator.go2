@@ -30,6 +30,15 @@ func ValueIterator[L, R any](i Iterator[alg.Pair[L, R]]) Iterator[R] {
 	})
 }
 
+type empty[T any] struct{}
+
+func (e empty[T]) Iterate(func(T) bool) {
+}
+
+func Empty[T any]() Iterator[T] {
+	return empty[T]{}
+}
+
 type OrderedIterator[T any] interface {
 	IterateInOrder(fn func(T) bool)
 }
