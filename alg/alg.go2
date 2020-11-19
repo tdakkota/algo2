@@ -8,6 +8,10 @@ func IsZero[T comparable](t T) bool {
 	return t == Zero[T]() && t == t
 }
 
+func IsNaN[T comparable](t T) bool {
+	return t != t
+}
+
 type Pair[L, R any] struct {
 	L
 	R
