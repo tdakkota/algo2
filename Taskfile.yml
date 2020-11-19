@@ -17,6 +17,7 @@ vars:
     list
     slices
     trees
+    stream
     testutil
 
 tasks:
