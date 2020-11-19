@@ -1,6 +1,11 @@
 package cache
 
-import "github.com/tdakkota/algo2/list"
+import (
+	"github.com/tdakkota/algo2/allocator"
+	"github.com/tdakkota/algo2/list"
+)
+
+var _ allocator.Allocator[int] = nil
 
 type element = list.Element
 
@@ -15,7 +20,7 @@ type freqNode[K, V any] struct {
 	list *list.LinkedList[lfuCacheNode[K, V]]
 }
 
-func newFreqNode[K, V any](freq int) freqNode[K, V] {
+func (l *LFUCache[K, V]) newFreqNode(freq int) freqNode[K, V] {
 	return freqNode[K, V]{
 		freq: freq,
 		list: list.NewLinkedList[lfuCacheNode[K, V]](),
@@ -43,7 +48,7 @@ func (l *LFUCache[K, V]) moveAddOneFreq(e *element[lfuCacheNode[K, V]], key K, v
 	if next := parentElement.Next(); next != nil && next.Value.freq == (parentElement.Value.freq+1) {
 		freq = next
 	} else {
-		freq = l.lfuHead.InsertAfter(newFreqNode[K, V](parentElement.Value.freq+1), parentElement)
+		freq = l.lfuHead.InsertAfter(l.newFreqNode(parentElement.Value.freq+1), parentElement)
 	}
 
 	cache := lfuCacheNode[K, V]{
@@ -70,7 +75,7 @@ type LFUCache[K comparable, V any] struct {
 	lfuHead  *list.LinkedList[freqNode[K, V]]
 }
 
-func NewLFUCache[K comparable, V any](capacity int) *LFUCache[K, V] { 
+func NewLFUCache[K comparable, V any](capacity int) *LFUCache[K, V] {
 	l := &LFUCache[K, V]{
 		capacity: capacity,
 		lfuHead:  list.NewLinkedList[freqNode[K, V]](),
@@ -111,7 +116,7 @@ func (l *LFUCache[K, V]) Put(key K, value V) {
 		if next := l.lfuHead.Front(); next != nil && next.Value.freq == 1 {
 			first = next
 		} else {
-			first = l.lfuHead.PushFront(newFreqNode[K, V](1))
+			first = l.lfuHead.PushFront(l.newFreqNode(1))
 		}
 
 		newCacheNode := lfuCacheNode[K, V]{
