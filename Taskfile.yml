@@ -7,7 +7,8 @@ env:
   GO2GOTOOL: go tool go2go
 
 vars:
-  GOFLAGS: -race -coverprofile=coverage.txt -covermode=atomic
+  GOTESTFLAGS: -race -coverprofile=coverage.txt -covermode=atomic
+  GOBENCHFLAGS: -bench=.
   PACKAGES: | 
     alg
     allocator
@@ -53,4 +54,4 @@ tasks:
     deps: [translate]
     cmds:
       - | 
-        {{ default "go" .GOBIN }} test -bench=. {{ .GOFLAGS }} ./...
+        {{ default "go" .GOBIN }} test {{ .GOBENCHFLAGS }} ./...
