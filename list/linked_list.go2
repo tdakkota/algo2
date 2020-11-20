@@ -109,7 +109,10 @@ func (l *LinkedList[TElem]) insert(e, at *Element[TElem]) *Element[TElem] {
 
 // insertValue is a convenience wrapper for insert(&Element[TElem]{Value: v}, at).
 func (l *LinkedList[TElem]) insertValue(v TElem, at *Element[TElem]) *Element[TElem] {
-	e, _ := l.allocator.New()
+	e, ok := l.allocator.New()
+	if !ok {
+		return nil
+	}
 	e.Value = v
 	return l.insert(e, at)
 }
@@ -124,7 +127,6 @@ func (l *LinkedList[TElem]) remove(e *Element[TElem]) TElem {
 	l.len--
 	
 	value := e.Value
-	l.allocator.Free(e)
 	return value
 }
 

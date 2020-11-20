@@ -345,26 +345,31 @@ func TestMoveUnknownMark(t *testing.T) {
 	checkList(t, &l2, []interface{}{2})
 }
 
-func BenchmarkLinkedListGC(b *testing.B) {
-	b.ReportAllocs()
+func benchmarkAllocator(a allocator.Allocator[Element[int]]) func(b *testing.B) {
+	return func(b *testing.B) {
+		b.Helper()
 
-	l := NewLinkedList[int]()
-	l.Init()
-
-	for i := 0; i < b.N; i++ {
-		l.PushFront(i)
+		l := NewLinkedList[int]()
+		l.SetAllocator(a)
+		l.Init()
+	
+		for i := 0; i < b.N; i++ {
+			l.PushFront(i)
+		}
+	
+		b.StopTimer()
+		i := 0
+		l.Iterate(func(e *Element[int]) bool {
+			b.Log(e.Value)
+			i++
+			return i < 10
+		})
 	}
 }
 
-func BenchmarkLinkedListArena(b *testing.B) {
-	b.ReportAllocs()
-
-	arena := allocator.NewArena[Element[int]](b.N + 1)
-	l := NewLinkedList[int]()
-	l.SetAllocator(arena)
-	l.Init()
-
-	for i := 0; i < b.N; i++ {
-		l.PushFront(i)
-	}
+func BenchmarkAllocator(b *testing.B) {
+	b.Run(`arena`,  func(b *testing.B) {
+		benchmarkAllocator(allocator.NewArena[Element[int]](b.N + 1))(b)
+	})
+	b.Run(`gc`, benchmarkAllocator(allocator.GCAllocator[Element[int]]{}))
 }
