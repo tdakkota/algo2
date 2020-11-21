@@ -1,4 +1,4 @@
-package trees
+package binary
 
 import (
 	"testing"
@@ -8,9 +8,9 @@ import (
 	"github.com/tdakkota/algo2/testutil"
 )
 
-func TestRBTree(t *testing.T) {
+func TestBinary(t *testing.T) {
 	const sizeTest = 5
-	m := &RBTree[int, int]{}
+	m := &Binary[int, int]{}
 	values := slices.RepeatFn(func(i int) int {
 		return i
 	}, sizeTest)

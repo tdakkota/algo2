@@ -1,4 +1,4 @@
-package trees
+package binary
 
 import (
 	"github.com/tdakkota/algo2/alg"

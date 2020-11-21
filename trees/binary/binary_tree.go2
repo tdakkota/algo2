@@ -1,22 +1,22 @@
-package trees
+package binary
 
 import (
 	"github.com/tdakkota/algo2/alg"
 	"github.com/tdakkota/algo2/constraints"
 )
 
-// BinaryTree represents the binary search tree.
-type BinaryTree[K constraints.Ordered, V any] struct {
+// Binary represents the binary search tree.
+type Binary[K constraints.Ordered, V any] struct {
 	root *btnode[K, V]
 	size int
 }
 
-func NewBinaryTree[K constraints.Ordered, V any]() *BinaryTree[K, V] {
-	return new(BinaryTree[K, V])
+func NewBinary[K constraints.Ordered, V any]() *Binary[K, V] {
+	return new(Binary[K, V])
 }
 
 // Min returns the minimal element.
-func (m *BinaryTree[K, V]) Min() (v alg.Pair[K, V], ok bool) {
+func (m *Binary[K, V]) Min() (v alg.Pair[K, V], ok bool) {
 	if min := m.root.min(); min != nil {
 		return alg.Two(min.key, min.value), true
 	}
@@ -24,7 +24,7 @@ func (m *BinaryTree[K, V]) Min() (v alg.Pair[K, V], ok bool) {
 }
 
 // Max returns the maximal element.
-func (m *BinaryTree[K, V]) Max() (v alg.Pair[K, V], ok bool) {
+func (m *Binary[K, V]) Max() (v alg.Pair[K, V], ok bool) {
 	if max := m.root.max(); max != nil {
 		return alg.Two(max.key, max.value), true
 	}
@@ -32,11 +32,15 @@ func (m *BinaryTree[K, V]) Max() (v alg.Pair[K, V], ok bool) {
 }
 
 // Len returns size of tree.
-func (m *BinaryTree[K, V]) Len() int {
+func (m *Binary[K, V]) Len() int {
 	return m.size
 }
 
-func (m *BinaryTree[K, V]) find(key K) **btnode[K, V] {
+func (m *Binary[K, V]) Clear() {
+	m.root = nil
+}
+
+func (m *Binary[K, V]) find(key K) **btnode[K, V] {
 	pn := &m.root
 	for *pn != nil {
 		switch {
@@ -53,7 +57,7 @@ func (m *BinaryTree[K, V]) find(key K) **btnode[K, V] {
 
 // Put inserts a new key/value into the map.
 // If the key is already present, the value is replaced.
-func (m *BinaryTree[K, V]) Put(key K, val V) {
+func (m *Binary[K, V]) Put(key K, val V) {
 	m.size++
 	pn := m.find(key)
 	if *pn != nil {
@@ -65,7 +69,7 @@ func (m *BinaryTree[K, V]) Put(key K, val V) {
 
 // Get returns the value associated with a key, or the zero value
 // if not present. The found result reports whether the key was found.
-func (m *BinaryTree[K, V]) Get(key K) (v V, ok bool) {
+func (m *Binary[K, V]) Get(key K) (v V, ok bool) {
 	pn := m.find(key)
 	if *pn == nil {
 		return alg.Zero[V](), false
@@ -73,7 +77,7 @@ func (m *BinaryTree[K, V]) Get(key K) (v V, ok bool) {
 	return (*pn).value, true
 }
 
-func (m *BinaryTree[K, V]) delete(key K) (_ bool) {
+func (m *Binary[K, V]) delete(key K) (_ bool) {
 	if m.root == nil {
 		return
 	}
@@ -90,7 +94,7 @@ func (m *BinaryTree[K, V]) delete(key K) (_ bool) {
 
 // Delete removes node with given key from tree and returns true if
 // deletion is successful.
-func (m *BinaryTree[K, V]) Delete(key K) (ok bool) {
+func (m *Binary[K, V]) Delete(key K) (ok bool) {
 	ok = m.delete(key)
 	if ok {
 		m.size--
@@ -99,28 +103,28 @@ func (m *BinaryTree[K, V]) Delete(key K) (ok bool) {
 }
 
 // Iterate traverse tree in order using given callback.
-func (m *BinaryTree[K, V]) iterate(o order, cb func(alg.Pair[K, V]) bool) {
+func (m *Binary[K, V]) iterate(o order, cb func(alg.Pair[K, V]) bool) {
 	if m.root != nil {
 		m.root.traverse(o, cb)
 	}
 }
 
 // Iterate traverse tree in order using given callback.
-func (m *BinaryTree[K, V]) Iterate(cb func(alg.Pair[K, V]) bool) {
+func (m *Binary[K, V]) Iterate(cb func(alg.Pair[K, V]) bool) {
 	m.IterateInOrder(cb)
 }
 
 // IterateInOrder traverse tree in order using given callback.
-func (m *BinaryTree[K, V]) IterateInOrder(cb func(alg.Pair[K, V]) bool) {
+func (m *Binary[K, V]) IterateInOrder(cb func(alg.Pair[K, V]) bool) {
 	m.iterate(inOrder, cb)
 }
 
 // IteratePreOrder traverse tree in pre-order using given callback.
-func (m *BinaryTree[K, V]) IteratePreOrder(cb func(alg.Pair[K, V]) bool) {
+func (m *Binary[K, V]) IteratePreOrder(cb func(alg.Pair[K, V]) bool) {
 	m.iterate(preOrder, cb)
 }
 
 // IteratePostOrder traverse tree in post-order using given callback.
-func (m *BinaryTree[K, V]) IteratePostOrder(cb func(alg.Pair[K, V]) bool) {
+func (m *Binary[K, V]) IteratePostOrder(cb func(alg.Pair[K, V]) bool) {
 	m.iterate(postOrder, cb)
 }

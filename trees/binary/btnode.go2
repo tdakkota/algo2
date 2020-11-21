@@ -1,4 +1,4 @@
-package trees
+package binary
 
 import (
 	"github.com/tdakkota/algo2/alg"
@@ -7,8 +7,8 @@ import (
 
 // btnode is a binary search tree node.
 type btnode[K constraints.Ordered, V any] struct {
-	key K
-	value V
+	key         K
+	value       V
 	left, right *btnode[K, V]
 }
 
@@ -26,11 +26,11 @@ func (m *btnode[K, V]) traverse(o order, cb func(alg.Pair[K, V]) bool) (_ bool) 
 		if m.left != nil && !m.left.traverse(o, cb) {
 			return
 		}
-		
+
 		if !cb(alg.Two(m.key, m.value)) {
 			return
 		}
-	
+
 		if m.right != nil && !m.right.traverse(o, cb) {
 			return
 		}
@@ -42,7 +42,7 @@ func (m *btnode[K, V]) traverse(o order, cb func(alg.Pair[K, V]) bool) (_ bool) 
 		if m.left != nil && !m.left.traverse(o, cb) {
 			return
 		}
-	
+
 		if m.right != nil && !m.right.traverse(o, cb) {
 			return
 		}
@@ -50,7 +50,7 @@ func (m *btnode[K, V]) traverse(o order, cb func(alg.Pair[K, V]) bool) (_ bool) 
 		if m.left != nil && !m.left.traverse(o, cb) {
 			return
 		}
-	
+
 		if m.right != nil && !m.right.traverse(o, cb) {
 			return
 		}
@@ -62,7 +62,6 @@ func (m *btnode[K, V]) traverse(o order, cb func(alg.Pair[K, V]) bool) (_ bool) 
 		panic("binary tree: invalid traverse order")
 	}
 
-
 	return true
 }
 
@@ -71,7 +70,7 @@ func (n *btnode[K, V]) min() *btnode[K, V] {
 		return nil
 	}
 	tmp := n
-	
+
 	if min := n.left.min(); min != nil {
 		if tmp.key > min.key {
 			tmp = min
@@ -81,7 +80,7 @@ func (n *btnode[K, V]) min() *btnode[K, V] {
 	if min := n.right.min(); min != nil {
 		if tmp.key > min.key {
 			tmp = min
-		} 
+		}
 	}
 
 	return tmp
@@ -92,7 +91,7 @@ func (n *btnode[K, V]) max() *btnode[K, V] {
 		return nil
 	}
 	tmp := n
-	
+
 	if max := n.left.max(); max != nil {
 		if tmp.key < max.key {
 			tmp = max
@@ -102,13 +101,13 @@ func (n *btnode[K, V]) max() *btnode[K, V] {
 	if max := n.right.max(); max != nil {
 		if tmp.key < max.key {
 			tmp = max
-		} 
+		}
 	}
 
 	return tmp
 }
 
-func (parent *btnode[K, V]) link(n *btnode[K,V]) {
+func (parent *btnode[K, V]) link(n *btnode[K, V]) {
 	if parent.left == n {
 		if n.left != nil {
 			parent.left = n.left

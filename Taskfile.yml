@@ -14,10 +14,12 @@ vars:
     allocator
     iterator
     cache
+    maps
     constraints
     list
     slices
     trees
+    trees/binary
     stream
     testutil
 
@@ -31,7 +33,8 @@ tasks:
           {{ $go_bin := default "go" .GOBIN -}}
           {{ $tool := default (cat $go_bin "tool go2go") .GO2GOTOOL -}}
           {{range $i, $line := .PACKAGES | splitLines }}{{ if $line -}} 
-          {{ $tool }} translate ./{{ $line }}/{{ $line }}.go2 &&
+          {{ $splt := splitList "/" $line -}}
+          {{ $tool }} translate ./{{ $line }}/{{ last $splt }}.go2 &&
           {{ $tool }} translate github.com/tdakkota/algo2/{{ $line }} &&
           {{ end }}{{ end -}}
           echo "complete!"
