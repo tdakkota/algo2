@@ -2,7 +2,6 @@ package binary
 
 import (
 	"github.com/tdakkota/algo2/alg"
-	"github.com/tdakkota/algo2/constraints"
 )
 
 type color int
@@ -13,10 +12,11 @@ const (
 )
 
 // rbnode is a red black search tree node.
-type rbnode[K constraints.Ordered, V any] struct {
+type rbnode[K, V any] struct {
 	key         K
 	value       V
 	color       color
+	tree        *RedBlack[K, V]
 	parent      *rbnode[K, V]
 	left, right *rbnode[K, V]
 }
@@ -62,13 +62,13 @@ func (n *rbnode[K, V]) min() *rbnode[K, V] {
 	tmp := n
 
 	if min := n.left.min(); min != nil {
-		if tmp.key > min.key {
+		if n.tree.ord(tmp.key, min.key) > 0 {
 			tmp = min
 		}
 	}
 
 	if min := n.right.min(); min != nil {
-		if tmp.key > min.key {
+		if n.tree.ord(tmp.key, min.key) > 0 {
 			tmp = min
 		}
 	}
@@ -83,13 +83,13 @@ func (n *rbnode[K, V]) max() *rbnode[K, V] {
 	tmp := n
 
 	if max := n.left.max(); max != nil {
-		if tmp.key < max.key {
+		if n.tree.ord(tmp.key, max.key) < 0 {
 			tmp = max
 		}
 	}
 
 	if max := n.right.max(); max != nil {
-		if tmp.key < max.key {
+		if n.tree.ord(tmp.key, max.key) < 0 {
 			tmp = max
 		}
 	}
@@ -142,7 +142,7 @@ func (node *rbnode[K, V]) traverse(o order, cb func(alg.Pair[K, V]) bool) (_ boo
 	return true
 }
 
-func nodeColor[K constraints.Ordered, V any](node *rbnode[K, V]) color {
+func nodeColor[K, V any](node *rbnode[K, V]) color {
 	if node == nil {
 		return black
 	}

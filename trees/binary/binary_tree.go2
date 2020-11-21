@@ -6,13 +6,20 @@ import (
 )
 
 // Binary represents the binary search tree.
-type Binary[K constraints.Ordered, V any] struct {
+type Binary[K, V any] struct {
 	root *btnode[K, V]
+	ord  constraints.Ord[K]
 	size int
 }
 
 func NewBinary[K constraints.Ordered, V any]() *Binary[K, V] {
-	return new(Binary[K, V])
+	return NewBinaryWithOrd[K, V](alg.BuiltinOrd[K])
+}
+
+func NewBinaryWithOrd[K, V any](ord constraints.Ord[K]) *Binary[K, V] {
+	b := new(Binary[K, V])
+	b.ord = ord
+	return b
 }
 
 // Min returns the minimal element.
@@ -43,10 +50,11 @@ func (m *Binary[K, V]) Clear() {
 func (m *Binary[K, V]) find(key K) **btnode[K, V] {
 	pn := &m.root
 	for *pn != nil {
-		switch {
-		case alg.Lt((*pn).key, key):
+		o := m.ord((*pn).key, key)
+		switch o {
+		case -1:
 			pn = &(*pn).left
-		case alg.Gt((*pn).key, key):
+		case 1:
 			pn = &(*pn).right
 		default:
 			return pn
@@ -64,7 +72,7 @@ func (m *Binary[K, V]) Put(key K, val V) {
 		(*pn).value = val
 		return
 	}
-	*pn = &btnode[K, V]{key: key, value: val}
+	*pn = &btnode[K, V]{key: key, value: val, tree: m}
 }
 
 // Get returns the value associated with a key, or the zero value
@@ -82,8 +90,8 @@ func (m *Binary[K, V]) delete(key K) (_ bool) {
 		return
 	}
 
-	if m.root.key == key {
-		tempRoot := &btnode[K, V]{}
+	if m.ord(key, m.root.key) == 0 {
+		tempRoot := &btnode[K, V]{tree: m}
 		tempRoot.left = m.root
 		r := m.root.del(tempRoot, key)
 		m.root = tempRoot.left

@@ -2,13 +2,13 @@ package binary
 
 import (
 	"github.com/tdakkota/algo2/alg"
-	"github.com/tdakkota/algo2/constraints"
 )
 
 // btnode is a binary search tree node.
-type btnode[K constraints.Ordered, V any] struct {
+type btnode[K, V any] struct {
 	key         K
 	value       V
+	tree 		*Binary[K, V]
 	left, right *btnode[K, V]
 }
 
@@ -72,13 +72,13 @@ func (n *btnode[K, V]) min() *btnode[K, V] {
 	tmp := n
 
 	if min := n.left.min(); min != nil {
-		if tmp.key > min.key {
+		if n.tree.ord(tmp.key, min.key) > 0 {
 			tmp = min
 		}
 	}
 
 	if min := n.right.min(); min != nil {
-		if tmp.key > min.key {
+		if n.tree.ord(tmp.key, min.key) > 0 {
 			tmp = min
 		}
 	}
@@ -93,13 +93,13 @@ func (n *btnode[K, V]) max() *btnode[K, V] {
 	tmp := n
 
 	if max := n.left.max(); max != nil {
-		if tmp.key < max.key {
+		if n.tree.ord(tmp.key, max.key) < 0 {
 			tmp = max
 		}
 	}
 
 	if max := n.right.max(); max != nil {
-		if tmp.key < max.key {
+		if n.tree.ord(tmp.key, max.key) < 0 {
 			tmp = max
 		}
 	}
@@ -121,25 +121,29 @@ func (parent *btnode[K, V]) link(n *btnode[K, V]) {
 			parent.right = n.right
 		}
 	}
+	n.tree = nil
 }
 
 func (n *btnode[K, V]) del(parent *btnode[K, V], k K) bool {
-	switch {
-	case n == nil:
+	if n == nil {
 		return false
-	case n.key == k:
+	}
+
+	o := n.tree.ord(n.key, k)
+	switch o {
+	case 0:
 		if m := n.right.min(); n.left != nil && m != nil {
 			n.key = m.key
 			return n.right.del(n, n.key)
 		}
 		parent.link(n)
 		return true
-	case n.key > k:
+	case 1:
 		if n.left == nil {
 			return false
 		}
 		return n.left.del(n, k)
-	case n.key < k:
+	case -1:
 		if n.right == nil {
 			return false
 		}

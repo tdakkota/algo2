@@ -38,3 +38,16 @@ func GtEq[T constraints.Ordered](a, b T) bool {
 func LtEq[T constraints.Ordered](a, b T) bool {
 	return Eq[T](a, b) || Lt[T](a, b)
 }
+
+func BuiltinOrd[T constraints.Ordered](a, b T) (_ constraints.Order) {
+	switch {
+	case a < b:
+		return -1
+	case a == b:
+		return 0
+	case a > b:
+		return 1
+	}
+
+	return
+}

@@ -10,7 +10,7 @@ import (
 
 func TestRedBlack(t *testing.T) {
 	const sizeTest = 5
-	m := &RedBlack[int, int]{}
+	m := NewRedBlack[int, int]()
 	values := slices.RepeatFn(func(i int) int {
 		return i
 	}, sizeTest)

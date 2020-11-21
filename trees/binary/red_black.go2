@@ -6,13 +6,20 @@ import (
 )
 
 // RedBlack represents the red black search tree.
-type RedBlack[K constraints.Ordered, V any] struct {
+type RedBlack[K, V any] struct {
 	root *rbnode[K, V]
+	ord  constraints.Ord[K]
 	size int
 }
 
 func NewRedBlack[K constraints.Ordered, V any]() *RedBlack[K, V] {
-	return new(RedBlack[K, V])
+	return NewRedBlackWithOrd[K, V](alg.BuiltinOrd[K])
+}
+
+func NewRedBlackWithOrd[K, V any](ord constraints.Ord[K]) *RedBlack[K, V] {
+	b := new(RedBlack[K, V])
+	b.ord = ord
+	return b
 }
 
 // Min returns the minimal element.
@@ -43,28 +50,28 @@ func (tree *RedBlack[K, V]) Clear() {
 func (tree *RedBlack[K, V]) Put(key K, value V) {
 	var insertedNode *rbnode[K, V]
 	if tree.root == nil {
-		tree.root = &rbnode[K, V]{key: key, value: value, color: red}
+		tree.root = &rbnode[K, V]{key: key, value: value, color: red, tree: tree}
 		insertedNode = tree.root
 	} else {
 		node := tree.root
 		loop := true
 		for loop {
-			switch {
-			case key == node.key:
+			switch tree.ord(key, node.key) {
+			case 0:
 				node.key = key
 				node.value = value
 				return
-			case key < node.key:
+			case -1:
 				if node.left == nil {
-					node.left = &rbnode[K, V]{key: key, value: value, color: red}
+					node.left = &rbnode[K, V]{key: key, value: value, color: red, tree: tree}
 					insertedNode = node.left
 					loop = false
 				} else {
 					node = node.left
 				}
-			case key > node.key:
+			case 1:
 				if node.right == nil {
-					node.right = &rbnode[K, V]{key: key, value: value, color: red}
+					node.right = &rbnode[K, V]{key: key, value: value, color: red, tree: tree}
 					insertedNode = node.right
 					loop = false
 				} else {
@@ -112,6 +119,7 @@ func (tree *RedBlack[K, V]) Delete(key K) (ok bool) {
 			child.color = black
 		}
 	}
+	node.tree = nil
 	tree.size--
 	return true
 }
@@ -119,12 +127,13 @@ func (tree *RedBlack[K, V]) Delete(key K) (ok bool) {
 func (tree *RedBlack[K, V]) lookup(key K) *rbnode[K, V] {
 	node := tree.root
 	for node != nil {
-		switch {
-		case key == node.key:
+		o := tree.ord(key, node.key)
+		switch o {
+		case 0:
 			return node
-		case key < node.key:
+		case -1:
 			node = node.left
-		case key > node.key:
+		case 1:
 			node = node.right
 		}
 	}
