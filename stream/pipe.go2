@@ -8,6 +8,10 @@ func Map[T, R any](s Stream[T], op func(T) R) Stream[R] {
 	})
 }
 
+func (s Stream[T]) Map(fn func(T) T) Stream[T] {
+	return Map[T, T](s, fn)
+}
+
 func Pipe[T, R any](s Stream[T], op func(d T) (R, bool)) Stream[R] {
 	it := func(fn func(R) bool) {
 		s.it.Iterate(func(t T) bool {
@@ -21,4 +25,8 @@ func Pipe[T, R any](s Stream[T], op func(d T) (R, bool)) Stream[R] {
 	}
 
 	return FromIterator[R](iterator.IteratorFunc[R](it))
+}
+
+func (s Stream[T]) Pipe(op func(d T) (T, bool)) Stream[T] {
+	return Pipe[T, T](s, op)
 }
