@@ -8,6 +8,8 @@ import (
 	"testing"
 	
 	"github.com/tdakkota/algo2/allocator"
+	"github.com/tdakkota/algo2/slices"
+	"github.com/tdakkota/algo2/testutil"
 )
 
 func checkListLen[TElem any](t *testing.T, l *LinkedList[TElem], len int) bool {
@@ -345,6 +347,23 @@ func TestMoveUnknownMark(t *testing.T) {
 	checkList(t, &l2, []interface{}{2})
 }
 
+func TestIterate(t *testing.T) {
+	var l LinkedList[int]
+	l.PushBack(1)
+	l.PushBack(2)
+	l.PushBack(3)
+
+	r := make([]int, 3)
+	i := 1
+	l.Iterate(func(e *Element[int]) bool {
+		r[i-1] = i
+		i++
+		return true
+	})
+
+	testutil.EqualFn(t, []int{1, 2, 3}, r, slices.Equal[int])
+}
+
 func benchmarkAllocator(a allocator.Allocator[Element[int]]) func(b *testing.B) {
 	return func(b *testing.B) {
 		b.Helper()
@@ -362,7 +381,7 @@ func benchmarkAllocator(a allocator.Allocator[Element[int]]) func(b *testing.B) 
 		l.Iterate(func(e *Element[int]) bool {
 			b.Log(e.Value)
 			i++
-			return i < 10
+			return i < 5
 		})
 	}
 }
