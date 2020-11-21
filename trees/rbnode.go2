@@ -1,0 +1,150 @@
+package trees
+
+import (
+	"github.com/tdakkota/algo2/alg"
+	"github.com/tdakkota/algo2/constraints"
+)
+
+type color int
+
+const (
+	black = iota
+	red
+)
+
+// rbnode is a red black search tree node.
+type rbnode[K constraints.Ordered, V any] struct {
+	key         K
+	value       V
+	color       color
+	parent      *rbnode[K, V]
+	left, right *rbnode[K, V]
+}
+
+func (node *rbnode[K, V]) grandparent() *rbnode[K, V] {
+	if node != nil && node.parent != nil {
+		return node.parent.parent
+	}
+	return nil
+}
+
+func (node *rbnode[K, V]) uncle() *rbnode[K, V] {
+	if node == nil || node.parent == nil || node.parent.parent == nil {
+		return nil
+	}
+	return node.parent.sibling()
+}
+
+func (node *rbnode[K, V]) sibling() *rbnode[K, V] {
+	if node == nil || node.parent == nil {
+		return nil
+	}
+	if node == node.parent.left {
+		return node.parent.right
+	}
+	return node.parent.left
+}
+
+func (node *rbnode[K, V]) maximumNode() *rbnode[K, V] {
+	if node == nil {
+		return nil
+	}
+	for node.right != nil {
+		node = node.right
+	}
+	return node
+}
+
+func (n *rbnode[K, V]) min() *rbnode[K, V] {
+	if n == nil {
+		return nil
+	}
+	tmp := n
+
+	if min := n.left.min(); min != nil {
+		if tmp.key > min.key {
+			tmp = min
+		}
+	}
+
+	if min := n.right.min(); min != nil {
+		if tmp.key > min.key {
+			tmp = min
+		}
+	}
+
+	return tmp
+}
+
+func (n *rbnode[K, V]) max() *rbnode[K, V] {
+	if n == nil {
+		return nil
+	}
+	tmp := n
+
+	if max := n.left.max(); max != nil {
+		if tmp.key < max.key {
+			tmp = max
+		}
+	}
+
+	if max := n.right.max(); max != nil {
+		if tmp.key < max.key {
+			tmp = max
+		}
+	}
+
+	return tmp
+}
+
+func (node *rbnode[K, V]) traverse(o order, cb func(alg.Pair[K, V]) bool) (_ bool) {
+	switch o {
+	case inOrder:
+		if node.left != nil && !node.left.traverse(o, cb) {
+			return
+		}
+
+		if !cb(alg.Two(node.key, node.value)) {
+			return
+		}
+
+		if node.right != nil && !node.right.traverse(o, cb) {
+			return
+		}
+	case preOrder:
+		if !cb(alg.Two(node.key, node.value)) {
+			return
+		}
+
+		if node.left != nil && !node.left.traverse(o, cb) {
+			return
+		}
+
+		if node.right != nil && !node.right.traverse(o, cb) {
+			return
+		}
+	case postOrder:
+		if node.left != nil && !node.left.traverse(o, cb) {
+			return
+		}
+
+		if node.right != nil && !node.right.traverse(o, cb) {
+			return
+		}
+
+		if !cb(alg.Two(node.key, node.value)) {
+			return
+		}
+	default:
+		panic("red black tree: invalid traverse order")
+	}
+
+	return true
+}
+
+func nodeColor[K constraints.Ordered, V any](node *rbnode[K, V]) color {
+	if node == nil {
+		return black
+	}
+	return node.color
+}

@@ -1,0 +1,318 @@
+package trees
+
+import (
+	"github.com/tdakkota/algo2/alg"
+	"github.com/tdakkota/algo2/constraints"
+)
+
+// RBTree represents the red black search tree.
+type RBTree[K constraints.Ordered, V any] struct {
+	root *rbnode[K, V]
+	size int
+}
+
+// Min returns the minimal element.
+func (tree *RBTree[K, V]) Min() (v alg.Pair[K, V], ok bool) {
+	if min := tree.root.min(); min != nil {
+		return alg.Two(min.key, min.value), true
+	}
+	return
+}
+
+// Max returns the maximal element.
+func (tree *RBTree[K, V]) Max() (v alg.Pair[K, V], ok bool) {
+	if max := tree.root.max(); max != nil {
+		return alg.Two(max.key, max.value), true
+	}
+	return
+}
+
+// Len returns size of tree.
+func (tree *RBTree[K, V]) Len() int {
+	return tree.size
+}
+
+func (tree *RBTree[K, V]) Put(key K, value V) {
+	var insertedNode *rbnode[K, V]
+	if tree.root == nil {
+		tree.root = &rbnode[K, V]{key: key, value: value, color: red}
+		insertedNode = tree.root
+	} else {
+		node := tree.root
+		loop := true
+		for loop {
+			switch {
+			case key == node.key:
+				node.key = key
+				node.value = value
+				return
+			case key < node.key:
+				if node.left == nil {
+					node.left = &rbnode[K, V]{key: key, value: value, color: red}
+					insertedNode = node.left
+					loop = false
+				} else {
+					node = node.left
+				}
+			case key > node.key:
+				if node.right == nil {
+					node.right = &rbnode[K, V]{key: key, value: value, color: red}
+					insertedNode = node.right
+					loop = false
+				} else {
+					node = node.right
+				}
+			}
+		}
+		insertedNode.parent = node
+	}
+	tree.insertCase1(insertedNode)
+	tree.size++
+}
+
+func (tree *RBTree[K, V]) Get(key K) (value V, found bool) {
+	if node := tree.lookup(key); node != nil {
+		return node.value, true
+	}
+	return
+}
+
+func (tree *RBTree[K, V]) Delete(key K) (ok bool) {
+	var child *rbnode[K, V]
+	node := tree.lookup(key)
+	if node == nil {
+		return
+	}
+	if node.left != nil && node.right != nil {
+		pred := node.left.maximumNode()
+		node.key = pred.key
+		node.value = pred.value
+		node = pred
+	}
+	if node.left == nil || node.right == nil {
+		if node.right == nil {
+			child = node.left
+		} else {
+			child = node.right
+		}
+		if node.color == black {
+			node.color = nodeColor(child)
+			tree.deleteCase1(node)
+		}
+		tree.replaceNode(node, child)
+		if node.parent == nil && child != nil {
+			child.color = black
+		}
+	}
+	tree.size--
+	return true
+}
+
+func (tree *RBTree[K, V]) lookup(key K) *rbnode[K, V] {
+	node := tree.root
+	for node != nil {
+		switch {
+		case key == node.key:
+			return node
+		case key < node.key:
+			node = node.left
+		case key > node.key:
+			node = node.right
+		}
+	}
+	return nil
+}
+
+func (tree *RBTree[K, V]) rotateLeft(node *rbnode[K, V]) {
+	right := node.right
+	tree.replaceNode(node, right)
+	node.right = right.left
+	if right.left != nil {
+		right.left.parent = node
+	}
+	right.left = node
+	node.parent = right
+}
+
+func (tree *RBTree[K, V]) rotateRight(node *rbnode[K, V]) {
+	left := node.left
+	tree.replaceNode(node, left)
+	node.left = left.right
+	if left.right != nil {
+		left.right.parent = node
+	}
+	left.right = node
+	node.parent = left
+}
+
+func (tree *RBTree[K, V]) replaceNode(old, new *rbnode[K, V]) {
+	if old.parent == nil {
+		tree.root = new
+	} else {
+		if old == old.parent.left {
+			old.parent.left = new
+		} else {
+			old.parent.right = new
+		}
+	}
+	if new != nil {
+		new.parent = old.parent
+	}
+}
+
+func (tree *RBTree[K, V]) insertCase1(node *rbnode[K, V]) {
+	if node.parent == nil {
+		node.color = black
+	} else {
+		tree.insertCase2(node)
+	}
+}
+
+func (tree *RBTree[K, V]) insertCase2(node *rbnode[K, V]) {
+	if nodeColor(node.parent) == black {
+		return
+	}
+	tree.insertCase3(node)
+}
+
+func (tree *RBTree[K, V]) insertCase3(node *rbnode[K, V]) {
+	uncle := node.uncle()
+	if nodeColor(uncle) == red {
+		node.parent.color = black
+		uncle.color = black
+		node.grandparent().color = red
+		tree.insertCase1(node.grandparent())
+	} else {
+		tree.insertCase4(node)
+	}
+}
+
+func (tree *RBTree[K, V]) insertCase4(node *rbnode[K, V]) {
+	grandparent := node.grandparent()
+	if node == node.parent.right && node.parent == grandparent.left {
+		tree.rotateLeft(node.parent)
+		node = node.left
+	} else if node == node.parent.left && node.parent == grandparent.right {
+		tree.rotateRight(node.parent)
+		node = node.right
+	}
+	tree.insertCase5(node)
+}
+
+func (tree *RBTree[K, V]) insertCase5(node *rbnode[K, V]) {
+	node.parent.color = black
+	grandparent := node.grandparent()
+	grandparent.color = red
+	if node == node.parent.left && node.parent == grandparent.left {
+		tree.rotateRight(grandparent)
+	} else if node == node.parent.right && node.parent == grandparent.right {
+		tree.rotateLeft(grandparent)
+	}
+}
+
+func (tree *RBTree[K, V]) deleteCase1(node *rbnode[K, V]) {
+	if node.parent == nil {
+		return
+	}
+	tree.deleteCase2(node)
+}
+
+func (tree *RBTree[K, V]) deleteCase2(node *rbnode[K, V]) {
+	sibling := node.sibling()
+	if nodeColor(sibling) == red {
+		node.parent.color = red
+		sibling.color = black
+		if node == node.parent.left {
+			tree.rotateLeft(node.parent)
+		} else {
+			tree.rotateRight(node.parent)
+		}
+	}
+	tree.deleteCase3(node)
+}
+
+func (tree *RBTree[K, V]) deleteCase3(node *rbnode[K, V]) {
+	sibling := node.sibling()
+	if nodeColor(node.parent) == black &&
+		nodeColor(sibling) == black &&
+		nodeColor(sibling.left) == black &&
+		nodeColor(sibling.right) == black {
+		sibling.color = red
+		tree.deleteCase1(node.parent)
+	} else {
+		tree.deleteCase4(node)
+	}
+}
+
+func (tree *RBTree[K, V]) deleteCase4(node *rbnode[K, V]) {
+	sibling := node.sibling()
+	if nodeColor(node.parent) == red &&
+		nodeColor(sibling) == black &&
+		nodeColor(sibling.left) == black &&
+		nodeColor(sibling.right) == black {
+		sibling.color = red
+		node.parent.color = black
+	} else {
+		tree.deleteCase5(node)
+	}
+}
+
+func (tree *RBTree[K, V]) deleteCase5(node *rbnode[K, V]) {
+	sibling := node.sibling()
+	if node == node.parent.left &&
+		nodeColor(sibling) == black &&
+		nodeColor(sibling.left) == red &&
+		nodeColor(sibling.right) == black {
+		sibling.color = red
+		sibling.left.color = black
+		tree.rotateRight(sibling)
+	} else if node == node.parent.right &&
+		nodeColor(sibling) == black &&
+		nodeColor(sibling.right) == red &&
+		nodeColor(sibling.left) == black {
+		sibling.color = red
+		sibling.right.color = black
+		tree.rotateLeft(sibling)
+	}
+	tree.deleteCase6(node)
+}
+
+func (tree *RBTree[K, V]) deleteCase6(node *rbnode[K, V]) {
+	sibling := node.sibling()
+	sibling.color = nodeColor(node.parent)
+	node.parent.color = black
+	if node == node.parent.left && nodeColor(sibling.right) == red {
+		sibling.right.color = black
+		tree.rotateLeft(node.parent)
+	} else if nodeColor(sibling.left) == red {
+		sibling.left.color = black
+		tree.rotateRight(node.parent)
+	}
+}
+
+// Iterate traverse tree in order using given callback.
+func (tree *RBTree[K, V]) iterate(o order, cb func(alg.Pair[K, V]) bool) {
+	if tree.root != nil {
+		tree.root.traverse(o, cb)
+	}
+}
+
+// Iterate traverse tree in order using given callback.
+func (tree *RBTree[K, V]) Iterate(cb func(alg.Pair[K, V]) bool) {
+	tree.IterateInOrder(cb)
+}
+
+// IterateInOrder traverse tree in order using given callback.
+func (tree *RBTree[K, V]) IterateInOrder(cb func(alg.Pair[K, V]) bool) {
+	tree.iterate(inOrder, cb)
+}
+
+// IteratePreOrder traverse tree in pre-order using given callback.
+func (tree *RBTree[K, V]) IteratePreOrder(cb func(alg.Pair[K, V]) bool) {
+	tree.iterate(preOrder, cb)
+}
+
+// IteratePostOrder traverse tree in post-order using given callback.
+func (tree *RBTree[K, V]) IteratePostOrder(cb func(alg.Pair[K, V]) bool) {
+	tree.iterate(postOrder, cb)
+}

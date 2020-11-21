@@ -8,7 +8,7 @@ import (
 // BinaryTree represents the binary search tree.
 type BinaryTree[K constraints.Ordered, V any] struct {
 	root *btnode[K, V]
-	size int 
+	size int
 }
 
 func NewBinaryTree[K constraints.Ordered, V any]() *BinaryTree[K, V] {
@@ -39,14 +39,14 @@ func (m *BinaryTree[K, V]) Len() int {
 func (m *BinaryTree[K, V]) find(key K) **btnode[K, V] {
 	pn := &m.root
 	for *pn != nil {
-			switch {
-			case alg.Lt((*pn).key, key):
-					pn = &(*pn).left
-			case alg.Gt((*pn).key, key):
-					pn = &(*pn).right
-			default:
-					return pn
-			}
+		switch {
+		case alg.Lt((*pn).key, key):
+			pn = &(*pn).left
+		case alg.Gt((*pn).key, key):
+			pn = &(*pn).right
+		default:
+			return pn
+		}
 	}
 	return pn
 }
@@ -57,8 +57,8 @@ func (m *BinaryTree[K, V]) Put(key K, val V) {
 	m.size++
 	pn := m.find(key)
 	if *pn != nil {
-			(*pn).value = val
-			return
+		(*pn).value = val
+		return
 	}
 	*pn = &btnode[K, V]{key: key, value: val}
 }
@@ -68,14 +68,14 @@ func (m *BinaryTree[K, V]) Put(key K, val V) {
 func (m *BinaryTree[K, V]) Get(key K) (v V, ok bool) {
 	pn := m.find(key)
 	if *pn == nil {
-			return alg.Zero[V](), false
+		return alg.Zero[V](), false
 	}
 	return (*pn).value, true
 }
 
 func (m *BinaryTree[K, V]) delete(key K) (_ bool) {
 	if m.root == nil {
-		return 
+		return
 	}
 
 	if m.root.key == key {
@@ -88,7 +88,7 @@ func (m *BinaryTree[K, V]) delete(key K) (_ bool) {
 	return m.root.left.del(m.root, key) || m.root.right.del(m.root, key)
 }
 
-// Delete removes node with given key from tree and returns true if 
+// Delete removes node with given key from tree and returns true if
 // deletion is successful.
 func (m *BinaryTree[K, V]) Delete(key K) (ok bool) {
 	ok = m.delete(key)
@@ -115,12 +115,12 @@ func (m *BinaryTree[K, V]) IterateInOrder(cb func(alg.Pair[K, V]) bool) {
 	m.iterate(inOrder, cb)
 }
 
-// IterateInOrder traverse tree in pre-order using given callback.
+// IteratePreOrder traverse tree in pre-order using given callback.
 func (m *BinaryTree[K, V]) IteratePreOrder(cb func(alg.Pair[K, V]) bool) {
 	m.iterate(preOrder, cb)
 }
 
-// IterateInOrder traverse tree in post-order using given callback.
+// IteratePostOrder traverse tree in post-order using given callback.
 func (m *BinaryTree[K, V]) IteratePostOrder(cb func(alg.Pair[K, V]) bool) {
 	m.iterate(postOrder, cb)
 }
