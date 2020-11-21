@@ -38,6 +38,8 @@ tasks:
 
   clean:
     cmds:
+      - cmd: | 
+          {{ default "go" .GOBIN }} clean -testcache
       - ignore_error: true
         cmd : |
           {{range $i, $line := .PACKAGES | splitLines }} {{ if $line -}} 
@@ -48,7 +50,7 @@ tasks:
     deps: [translate]
     cmds:
       - | 
-        {{ default "go" .GOBIN }} test {{ .GOFLAGS }} ./...
+        {{ default "go" .GOBIN }} test {{ .GOTESTFLAGS }} ./...
 
   bench:
     deps: [translate]
