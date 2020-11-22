@@ -45,7 +45,7 @@ func NotEqualFn[T any](t *testing.T, expected, got T, cmp func(a, b T) bool) {
 
 func NotEqualFnf[T any](t *testing.T, expected, got T, cmp func(a, b T) bool, f string, args ...interface{}) {
 	t.Helper()
-	if cmp(expected, got)  {
+	if cmp(expected, got) {
 		t.Fatalf(f, args...)
 	}
 }
