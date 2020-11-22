@@ -1,5 +1,7 @@
 package sets
 
+import "github.com/tdakkota/algo2/alg"
+
 // Creates copy of set
 func Copy[T comparable](src Set[T]) (dst Set[T]) {
 	dst = HashSet[T](src.Len())
@@ -82,14 +84,14 @@ func DiffTo[T any](a, b, dst Set[T]) {
 	})
 }
 
-// Intersect creates HashSet and puts to it intersection of s and b
+// Intersect creates HashSet and puts to it intersection of a and b
 func Intersect[T comparable](a, b Set[T]) (dst Set[T]) {
 	dst = HashSet[T](a.Len())
 	IntersectTo(a, b, dst)
 	return
 }
 
-// IntersectTo puts intersection of s and b to dst
+// IntersectTo puts intersection of a and b to dst
 func IntersectTo[T any](a, b, dst Set[T]) {
 	a.Iterate(func(v T) bool {
 		if b.Contains(v) {
@@ -114,6 +116,25 @@ func Subset[T any](a, b Set[T]) (r bool) {
 	return
 }
 
+// Equal returns true if a is subset of b and b is subset of a.
 func Equal[T any](a, b Set[T]) bool {
 	return Subset[T](a, b) && Subset[T](b, a)
+}
+
+// Cartesian returns cartesian product of a and b.
+func Cartesian[T comparable](a, b Set[T]) (dst Set[alg.Pair[T, T]]) {
+	dst = HashSet[alg.Pair[T, T]](a.Len() + b.Len())
+	CartesianTo[T](a, b, dst)
+	return
+}
+
+// CartesianTo puts cartesian product of a and b to dst
+func CartesianTo[T any](a, b Set[T], dst Set[alg.Pair[T, T]]) {
+	a.Iterate(func(l T) bool {
+		b.Iterate(func(r T) bool {
+			dst.Add(alg.Two(l, r))
+			return true
+		})
+		return true
+	})
 }

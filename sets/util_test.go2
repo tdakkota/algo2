@@ -4,6 +4,7 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/tdakkota/algo2/alg"
 	"github.com/tdakkota/algo2/slices"
 	"github.com/tdakkota/algo2/iterator"
 	"github.com/tdakkota/algo2/testutil"
@@ -53,4 +54,23 @@ func TestIntersect(t *testing.T) {
 	c := Intersect[int](a, b)
 	equal(t, c, []int{3, 4})
 	testutil.EqualFn(t, Set[int](a), Intersect[int](a, a), Equal[int])
+}
+
+func TestCartesian(t *testing.T) {
+	a, b := Of(1, 2), Of(3, 4)
+	c := Cartesian[int](a, b)
+	v := HashSet[alg.Pair[int, int]](0)
+	v.Add(alg.Two(1, 3))
+	v.Add(alg.Two(1, 4))
+	v.Add(alg.Two(2, 3))
+	v.Add(alg.Two(2, 4))
+
+	c.Iterate(func(p alg.Pair[int, int]) bool {
+		v.Delete(p)
+		return true
+	})
+
+	if v.Len() != 0 {
+		t.Fatal("expected all pairs were met")
+	}
 }
