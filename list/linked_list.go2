@@ -234,7 +234,15 @@ func (l *LinkedList[TElem]) MoveAfter(e, mark *Element[TElem]) {
 	l.move(e, mark)
 }
 
-func (l *LinkedList[TElem]) Iterate(fn func(*Element[TElem]) bool) {
+func (l LinkedList[TElem]) Iterate(fn func(TElem) bool) {
+	for e := l.Front(); e != nil; e = e.Next() {
+		if !fn(e.Value) {
+			return
+		}
+	}
+}
+
+func (l LinkedList[TElem]) IterateElements(fn func(*Element[TElem]) bool) {
 	for e := l.Front(); e != nil; e = e.Next() {
 		if !fn(e) {
 			return

@@ -14,6 +14,10 @@ func (f IteratorFunc[T]) Iterate(fn func(T) bool) {
 	f(fn)
 }
 
+func Func[T any](it func(fn func(T) bool)) Iterator[T] {
+	return IteratorFunc[T](it)
+}
+
 func KeyIterator[L, R any](i Iterator[alg.Pair[L, R]]) Iterator[L] {
 	return IteratorFunc[L](func(cb func(L) bool) {
 		i.Iterate(func(p alg.Pair[L, R]) bool {

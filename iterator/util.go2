@@ -89,3 +89,11 @@ func Sequential[T any](iterators ...Iterator[T]) Iterator[T] {
 		iterators: iterators,
 	}
 }
+
+func Values[T any](iterators ...Iterator[T]) (r []T) {
+	Sequential[T](iterators...).Iterate(func(e T) bool {
+		r = append(r, e)
+		return true
+	})
+	return
+}
