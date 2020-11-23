@@ -3,6 +3,8 @@ package sets
 import (
 	"github.com/tdakkota/algo2/alg"
 	"github.com/tdakkota/algo2/maps"
+	"github.com/tdakkota/algo2/trees/binary"
+	"github.com/tdakkota/algo2/constraints"
 )
 
 type MapSet[T any] struct {
@@ -11,6 +13,10 @@ type MapSet[T any] struct {
 
 func HashSet[T comparable](capacity int) MapSet[T] {
 	return FromMap[T](maps.NewHashMap[T, struct{}](capacity))
+}
+
+func TreeSet[T constraints.Ordered]() MapSet[T] {
+	return FromMap[T](binary.NewRedBlack[T, struct{}]())
 }
 
 func Of[T comparable](e ...T) MapSet[T] {
