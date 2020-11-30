@@ -19,6 +19,7 @@ vars:
     constraints
     list
     slices
+    sync/atomic
     trees
     trees/binary
     stream
