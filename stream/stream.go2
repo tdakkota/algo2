@@ -14,6 +14,8 @@ func Of[T any](e ...T) Stream[T] {
 	return FromIterator[T](iterator.Slice(e))
 }
 
+var _ iterator.Iterator[int] = Stream[int]{}
+
 func (s Stream[T]) Iterate(fn func(T) bool) {
 	if s.it == nil {
 		return
