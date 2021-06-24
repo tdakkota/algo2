@@ -32,7 +32,7 @@ jobs:
 
     - name: Cache dev.go2go build
       id: cache
-      uses: actions/cache@v2.1.5
+      uses: actions/cache@v2.1.6
       with:
         path: ${{ github.workspace }}/dev.go2go
         key: ${{ runner.os }}-${{ env.go2go_commit_hash }}
