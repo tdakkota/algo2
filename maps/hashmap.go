@@ -21,10 +21,9 @@ func NewHashMap[K comparable, V any](capacity int) HashMap[K, V] {
 	return HashMap[K, V]{m: m}
 }
 
-
 func (m HashMap[K, V]) Get(k K) (v V, ok bool) {
 	v, ok = m.m[k]
-	return 
+	return
 }
 
 func (m HashMap[K, V]) Put(k K, v V) {
@@ -39,7 +38,7 @@ func (m HashMap[K, V]) Delete(k K) (ok bool) {
 	return ok
 }
 
-func (m HashMap[K, V]) Len() int  {
+func (m HashMap[K, V]) Len() int {
 	return len(m.m)
 }
 

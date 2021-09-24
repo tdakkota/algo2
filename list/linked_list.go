@@ -111,7 +111,7 @@ func (l *LinkedList[TElem]) remove(e *Element[TElem]) TElem {
 	e.prev = nil // avoid memory leaks
 	e.list = nil
 	l.len--
-	
+
 	value := e.Value
 	return value
 }

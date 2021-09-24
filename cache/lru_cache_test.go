@@ -86,9 +86,9 @@ func runLRUCacheTest(t *testing.T, test string) {
 
 func TestLRUCache(t *testing.T) {
 	for i, test := range lruTests {
-		t.Run(fmt.Sprintf("Test #%d", i+1), func (t *testing.T) {
+		t.Run(fmt.Sprintf("Test #%d", i+1), func(t *testing.T) {
 			runLRUCacheTest(t, test)
 		})
 	}
-	
+
 }

@@ -1,14 +1,13 @@
 package iterator
 
 import (
+	"constraints"
 	"fmt"
 	"math"
 	"testing"
-
-	"github.com/tdakkota/algo2/constraints"
 )
 
-type rangeTestCase[T constraints.Real] struct {
+type rangeTestCase[T constraints.Integer] struct {
 	from, to, step T
 	expected       []T
 }
@@ -75,4 +74,3 @@ func TestRepeat(t *testing.T) {
 		{1, 0, nil},
 	}...)(t)
 }
-

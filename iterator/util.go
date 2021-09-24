@@ -1,16 +1,13 @@
 package iterator
 
 import (
+	"constraints"
+
 	"github.com/tdakkota/algo2/alg"
-	"github.com/tdakkota/algo2/constraints"
 )
 
-func Range[T constraints.Real](from, to, step T) Iterator[T] {
+func Range[T constraints.Integer](from, to, step T) Iterator[T] {
 	if alg.IsZero(step) {
-		return Empty[T]()
-	}
-
-	if alg.IsNaN(step) || alg.IsNaN(to) || alg.IsNaN(from) {
 		return Empty[T]()
 	}
 
@@ -37,7 +34,7 @@ func Range[T constraints.Real](from, to, step T) Iterator[T] {
 	}
 }
 
-func FromTo[T constraints.Real](from, to T) Iterator[T] {
+func FromTo[T constraints.Integer](from, to T) Iterator[T] {
 	return Range[T](from, to, T(1))
 }
 

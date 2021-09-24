@@ -1,8 +1,9 @@
 package slices
 
 import (
+	"constraints"
+
 	"github.com/tdakkota/algo2/alg"
-	"github.com/tdakkota/algo2/constraints"
 )
 
 func Repeat[T any](value T, count int) []T {
@@ -11,7 +12,7 @@ func Repeat[T any](value T, count int) []T {
 		return []T{}
 	case count == 1:
 		return []T{value}
-	case count < 0 :
+	case count < 0:
 		panic("negative Repeat count")
 	}
 
@@ -30,7 +31,7 @@ func RepeatFn[T any](fn func(int) T, count int) []T {
 		return []T{}
 	case count == 1:
 		return []T{fn(0)}
-	case count < 0 :
+	case count < 0:
 		panic("negative Repeat count")
 	}
 
@@ -63,16 +64,16 @@ func ReverseCopy[T any](i []T) []T {
 // elements equal. All floating point NaNs are considered equal.
 func Equal[T comparable](s1, s2 []T) bool {
 	if len(s1) != len(s2) {
-			return false
+		return false
 	}
 	for i, v1 := range s1 {
-			v2 := s2[i]
-			if v1 != v2 {
-					isNaN := func(f T) bool { return f != f }
-					if !isNaN(v1) || !isNaN(v2) {
-							return false
-					}
+		v2 := s2[i]
+		if v1 != v2 {
+			isNaN := func(f T) bool { return f != f }
+			if !isNaN(v1) || !isNaN(v2) {
+				return false
 			}
+		}
 	}
 	return true
 }
@@ -124,5 +125,5 @@ func Min[Elem constraints.Ordered](s []Elem) Elem {
 		var zero Elem
 		return zero
 	}
-	return Reduce(s[1:], s[0], alg.Min(Elem))
+	return Reduce(s[1:], s[0], alg.Min[Elem)
 }

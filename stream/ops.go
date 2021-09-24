@@ -1,4 +1,3 @@
-
 package stream
 
 func (s Stream[T]) Peek(fn func(T)) Stream[T] {
@@ -20,7 +19,6 @@ func (s Stream[T]) Filter(fn func(T) bool) Stream[T] {
 		return t, fn(t)
 	})
 }
-
 
 func (s Stream[T]) TakeWhile(fn func(T) bool) Stream[T] {
 	r := true
@@ -56,9 +54,8 @@ func (s Stream[T]) Limit(i int) Stream[T] {
 	})
 }
 
-
 func (s Stream[T]) Count() (i int) {
-	s.Iterate(func(T) bool{
+	s.Iterate(func(T) bool {
 		i++
 		return true
 	})
@@ -74,7 +71,7 @@ func (s Stream[T]) First() (r T, ok bool) {
 }
 
 func (s Stream[T]) Any(fn func(T) bool) (r bool) {
-	_, r = s.Filter(fn).First() 
+	_, r = s.Filter(fn).First()
 	return
 }
 
@@ -89,5 +86,3 @@ func (s Stream[T]) All(fn func(T) bool) (r bool) {
 	})
 	return
 }
-
-

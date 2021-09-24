@@ -38,17 +38,17 @@ func (l *SliceList[T]) Pop() (v T, ok bool) {
 
 func (l *SliceList[T]) Remove(i int) (v T) {
 	length := len(*l)
-	if i == length - 1 {
+	if i == length-1 {
 		v, _ = l.Pop()
-		return v 
+		return v
 	}
 
 	a := *l
 	v = a[i]
 	// Remove the element at index i from a.
-	copy(a[i:], a[i+1:]) // Shift a[i+1:] left one index.
-	a[length-1] = alg.Zero[T]()    // Erase last element (write zero value).
-	a = a[:length-1]     // Truncate slice.
+	copy(a[i:], a[i+1:])        // Shift a[i+1:] left one index.
+	a[length-1] = alg.Zero[T]() // Erase last element (write zero value).
+	a = a[:length-1]            // Truncate slice.
 	*l = a
 	return v
 }

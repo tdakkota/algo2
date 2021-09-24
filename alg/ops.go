@@ -1,7 +1,7 @@
 // Package alg provides some common basic function.
 package alg
 
-import "github.com/tdakkota/algo2/constraints"
+import "constraints"
 
 // Max returns the maximum of two values of some ordered type.
 func Max[T constraints.Ordered](a, b T) T {
@@ -39,7 +39,17 @@ func LtEq[T constraints.Ordered](a, b T) bool {
 	return Eq[T](a, b) || Lt[T](a, b)
 }
 
-func BuiltinOrd[T constraints.Ordered](a, b T) (_ constraints.Order) {
+type Order int
+
+const (
+	Lesser  Order = -1
+	Equal         = 0
+	Greater       = 1
+)
+
+type Ord[T any] func(a, b T) Order
+
+func BuiltinOrd[T constraints.Ordered](a, b T) (_ Order) {
 	switch {
 	case a < b:
 		return -1

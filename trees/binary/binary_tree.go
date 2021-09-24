@@ -1,14 +1,15 @@
 package binary
 
 import (
+	"constraints"
+
 	"github.com/tdakkota/algo2/alg"
-	"github.com/tdakkota/algo2/constraints"
 )
 
 // Binary represents the binary search tree.
 type Binary[K, V any] struct {
 	root *btnode[K, V]
-	ord  constraints.Ord[K]
+	ord  alg.Ord[K]
 	size int
 }
 
@@ -16,7 +17,7 @@ func NewBinary[K constraints.Ordered, V any]() *Binary[K, V] {
 	return NewBinaryWithOrd[K, V](alg.BuiltinOrd[K])
 }
 
-func NewBinaryWithOrd[K, V any](ord constraints.Ord[K]) *Binary[K, V] {
+func NewBinaryWithOrd[K, V any](ord alg.Ord[K]) *Binary[K, V] {
 	b := new(Binary[K, V])
 	b.ord = ord
 	return b

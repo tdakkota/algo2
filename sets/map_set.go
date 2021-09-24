@@ -1,10 +1,11 @@
 package sets
 
 import (
+	"constraints"
+
 	"github.com/tdakkota/algo2/alg"
 	"github.com/tdakkota/algo2/maps"
 	"github.com/tdakkota/algo2/trees/binary"
-	"github.com/tdakkota/algo2/constraints"
 )
 
 type MapSet[T any] struct {

@@ -8,7 +8,6 @@ import (
 	"github.com/tdakkota/algo2/testutil"
 )
 
-
 func TestSliceList(t *testing.T) {
 	l := SliceList[int]([]int{1, 2, 3, 4, 5})
 	testutil.Equal(t, 5, l.Len())

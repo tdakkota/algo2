@@ -13,10 +13,10 @@ func IsNaN[T comparable](t T) bool {
 }
 
 type Pair[L, R any] struct {
-	L
-	R
+	L L
+	R R
 }
 
 func Two[L, R any](l L, r R) Pair[L, R] {
-	return Pair[L, R]{l, r}
+	return Pair[L, R]{L: l, R: r}
 }

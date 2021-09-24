@@ -10,6 +10,6 @@ func (v *Value[T]) Load() T {
 	return v.inner.Load().(T)
 }
 
-func (v *Value[T]) Store(x T)  {
+func (v *Value[T]) Store(x T) {
 	v.inner.Store(x)
 }

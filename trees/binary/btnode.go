@@ -8,7 +8,7 @@ import (
 type btnode[K, V any] struct {
 	key         K
 	value       V
-	tree 		*Binary[K, V]
+	tree        *Binary[K, V]
 	left, right *btnode[K, V]
 }
 

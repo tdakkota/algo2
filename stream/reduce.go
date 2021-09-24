@@ -1,6 +1,6 @@
 package stream
 
-func Reduce[T, U](s Stream[T], identity U, acc func(U, T) U) (r U) {
+func Reduce[T, U any](s Stream[T], identity U, acc func(U, T) U) (r U) {
 	r = identity
 	s.Iterate(func(t T) bool {
 		r = acc(r, t)

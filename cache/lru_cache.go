@@ -11,7 +11,7 @@ type LRUCache[K comparable, V any] struct {
 	lruList  *list.LinkedList[alg.Pair[K, V]]
 }
 
-func NewLRUCache[K comparable, V any](capacity int) *LRUCache[K, V] { 
+func NewLRUCache[K comparable, V any](capacity int) *LRUCache[K, V] {
 	l := &LRUCache[K, V]{
 		capacity: capacity,
 		lruList:  list.NewLinkedList[alg.Pair[K, V]](),

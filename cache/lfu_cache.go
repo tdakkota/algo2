@@ -4,12 +4,10 @@ import (
 	"github.com/tdakkota/algo2/list"
 )
 
-type element = list.Element
-
 type lfuCacheNode[K, V any] struct {
 	key    K
 	value  V
-	parent *element[freqNode[K, V]]
+	parent *list.Element[freqNode[K, V]]
 }
 
 type freqNode[K, V any] struct {
@@ -24,7 +22,7 @@ func (l *LFUCache[K, V]) newFreqNode(freq int) freqNode[K, V] {
 	}
 }
 
-func (l *LFUCache[K, V]) evictNode(e *element[lfuCacheNode[K, V]]) {
+func (l *LFUCache[K, V]) evictNode(e *list.Element[lfuCacheNode[K, V]]) {
 	// remove the cache node from the linkedList
 	// remove the freqNode(parent) if it is empty
 	// do nothing to the map
@@ -37,8 +35,8 @@ func (l *LFUCache[K, V]) evictNode(e *element[lfuCacheNode[K, V]]) {
 	}
 }
 
-func (l *LFUCache[K, V]) moveAddOneFreq(e *element[lfuCacheNode[K, V]], key K, value V) *element[lfuCacheNode[K, V]] {
-	var freq *element[freqNode[K, V]]
+func (l *LFUCache[K, V]) moveAddOneFreq(e *list.Element[lfuCacheNode[K, V]], key K, value V) *list.Element[lfuCacheNode[K, V]] {
+	var freq *list.Element[freqNode[K, V]]
 	n := e.Value
 	parentElement := n.parent
 
@@ -59,7 +57,7 @@ func (l *LFUCache[K, V]) moveAddOneFreq(e *element[lfuCacheNode[K, V]], key K, v
 	return listElement
 }
 
-func (l *LFUCache[K, V]) removeFreqNode(node *element[freqNode[K, V]]) {
+func (l *LFUCache[K, V]) removeFreqNode(node *list.Element[freqNode[K, V]]) {
 	if node.Value.freq == 0 {
 		panic("should not remove the head")
 	}
@@ -68,7 +66,7 @@ func (l *LFUCache[K, V]) removeFreqNode(node *element[freqNode[K, V]]) {
 
 type LFUCache[K comparable, V any] struct {
 	capacity int
-	cache    map[K]*element[lfuCacheNode[K, V]]
+	cache    map[K]*list.Element[lfuCacheNode[K, V]]
 	lfuHead  *list.LinkedList[freqNode[K, V]]
 }
 
@@ -79,9 +77,9 @@ func NewLFUCache[K comparable, V any](capacity int) *LFUCache[K, V] {
 	}
 
 	if capacity > 0 {
-		l.cache = make(map[K]*element[lfuCacheNode[K, V]], capacity)
+		l.cache = make(map[K]*list.Element[lfuCacheNode[K, V]], capacity)
 	} else {
-		l.cache = map[K]*element[lfuCacheNode[K, V]]{}
+		l.cache = map[K]*list.Element[lfuCacheNode[K, V]]{}
 	}
 
 	return l
@@ -109,7 +107,7 @@ func (l *LFUCache[K, V]) Put(key K, value V) {
 			l.Delete(lfuNode.Value.key)
 		}
 
-		var first *element[freqNode[K, V]]
+		var first *list.Element[freqNode[K, V]]
 		if next := l.lfuHead.Front(); next != nil && next.Value.freq == 1 {
 			first = next
 		} else {

@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/tdakkota/algo2/alg"
-	"github.com/tdakkota/algo2/slices"
 	"github.com/tdakkota/algo2/iterator"
+	"github.com/tdakkota/algo2/slices"
 	"github.com/tdakkota/algo2/testutil"
 )
 

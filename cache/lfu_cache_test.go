@@ -83,9 +83,9 @@ func runLFUCacheTest(t *testing.T, test string) {
 
 func TestLFUCache(t *testing.T) {
 	for i, test := range lfuTests {
-		t.Run(fmt.Sprintf("Test #%d", i), func (t *testing.T) {
+		t.Run(fmt.Sprintf("Test #%d", i), func(t *testing.T) {
 			runLFUCacheTest(t, test)
 		})
 	}
-	
+
 }

@@ -1,14 +1,15 @@
 package binary
 
 import (
+	"constraints"
+
 	"github.com/tdakkota/algo2/alg"
-	"github.com/tdakkota/algo2/constraints"
 )
 
 // RedBlack represents the red black search tree.
 type RedBlack[K, V any] struct {
 	root *rbnode[K, V]
-	ord  constraints.Ord[K]
+	ord  alg.Ord[K]
 	size int
 }
 
@@ -16,7 +17,7 @@ func NewRedBlack[K constraints.Ordered, V any]() *RedBlack[K, V] {
 	return NewRedBlackWithOrd[K, V](alg.BuiltinOrd[K])
 }
 
-func NewRedBlackWithOrd[K, V any](ord constraints.Ord[K]) *RedBlack[K, V] {
+func NewRedBlackWithOrd[K, V any](ord alg.Ord[K]) *RedBlack[K, V] {
 	b := new(RedBlack[K, V])
 	b.ord = ord
 	return b

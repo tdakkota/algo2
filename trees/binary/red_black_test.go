@@ -17,7 +17,7 @@ func TestRedBlack(t *testing.T) {
 	r := make([]int, sizeTest)
 
 	for i, value := range values {
-		_, found := m.Get(i);
+		_, found := m.Get(i)
 		testutil.False(t, found)
 		found = m.Delete(i)
 		testutil.False(t, found)
@@ -46,7 +46,7 @@ func TestRedBlack(t *testing.T) {
 		v, found := m.Get(i)
 		testutil.True(t, found)
 		testutil.Equal(t, value, v)
-	
+
 		m.Put(i, value)
 		v, found = m.Get(i)
 		testutil.True(t, found)
@@ -89,7 +89,7 @@ func TestRedBlack(t *testing.T) {
 		t.Errorf("expected minimal not found, got %v", min.R)
 	}
 
-	if max, ok := m.Max(); ok  {
+	if max, ok := m.Max(); ok {
 		t.Errorf("expected maximal not found, got %v", max.R)
 	}
 
