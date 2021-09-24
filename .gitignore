@@ -2,5 +2,4 @@
 .idea
 tmp
 out
-*.go
 coverage.txt
