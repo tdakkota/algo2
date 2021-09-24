@@ -7,7 +7,6 @@ package list
 import (
 	"testing"
 
-	"github.com/tdakkota/algo2/allocator"
 	"github.com/tdakkota/algo2/iterator"
 	"github.com/tdakkota/algo2/slices"
 	"github.com/tdakkota/algo2/testutil"
@@ -356,33 +355,4 @@ func TestIterate(t *testing.T) {
 
 	r := iterator.Values[int](l)
 	testutil.EqualFn(t, []int{1, 2, 3}, r, slices.Equal[int])
-}
-
-func benchmarkAllocator(a allocator.Allocator[Element[int]]) func(b *testing.B) {
-	return func(b *testing.B) {
-		b.Helper()
-
-		l := NewLinkedList[int]()
-		l.SetAllocator(a)
-		l.Init()
-
-		for i := 0; i < b.N; i++ {
-			l.PushFront(i)
-		}
-
-		b.StopTimer()
-		i := 0
-		l.IterateElements(func(e *Element[int]) bool {
-			b.Log(e.Value)
-			i++
-			return i < 5
-		})
-	}
-}
-
-func BenchmarkAllocator(b *testing.B) {
-	b.Run(`arena`, func(b *testing.B) {
-		benchmarkAllocator(allocator.NewArena[Element[int]](b.N + 1))(b)
-	})
-	b.Run(`gc`, benchmarkAllocator(allocator.GCAllocator[Element[int]]{}))
 }

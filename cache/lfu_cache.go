@@ -1,11 +1,8 @@
 package cache
 
 import (
-	"github.com/tdakkota/algo2/allocator"
 	"github.com/tdakkota/algo2/list"
 )
-
-var _ allocator.Allocator[int] = nil
 
 type element = list.Element
 
