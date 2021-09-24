@@ -3,14 +3,14 @@ package slices
 import (
 	"fmt"
 	"math"
-	"testing"
 	"strings"
+	"testing"
 
 	"github.com/tdakkota/algo2/testutil"
 )
 
 func TestRepeat(t *testing.T) {
-	tests := []struct{
+	tests := []struct {
 		count int
 		value int
 	}{
@@ -22,9 +22,9 @@ func TestRepeat(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("Test Repeat %d %d times", test.value, test.count), func(t *testing.T){
+		t.Run(fmt.Sprintf("Test Repeat %d %d times", test.value, test.count), func(t *testing.T) {
 			a := Repeat[int](test.value, test.count)
-			testutil.Equal(t, len(a), test.count) 
+			testutil.Equal(t, len(a), test.count)
 			testutil.EqualFn(t, a, Repeat[int](test.value, test.count), Equal[int])
 		})
 	}
@@ -33,7 +33,7 @@ func TestRepeat(t *testing.T) {
 var indexFn = func(i int) int { return i }
 
 func TestRepeatFn(t *testing.T) {
-	tests := []struct{
+	tests := []struct {
 		count int
 		value func(int) int
 	}{
@@ -45,7 +45,7 @@ func TestRepeatFn(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("Test RepeatFn function %d times", test.count), func(t *testing.T){
+		t.Run(fmt.Sprintf("Test RepeatFn function %d times", test.count), func(t *testing.T) {
 			a := RepeatFn[int](test.value, test.count)
 			testutil.Equal(t, len(a), test.count)
 			testutil.EqualFn(t, a, RepeatFn[int](test.value, test.count), Equal[int])
@@ -54,8 +54,8 @@ func TestRepeatFn(t *testing.T) {
 }
 
 func TestReverse(t *testing.T) {
-	tests := []struct{
-		input []int
+	tests := []struct {
+		input    []int
 		expected []int
 	}{
 		{[]int{}, []int{}},
@@ -72,8 +72,8 @@ func TestReverse(t *testing.T) {
 }
 
 func TestReverseCopy(t *testing.T) {
-	tests := []struct{
-		input []int
+	tests := []struct {
+		input    []int
 		expected []int
 	}{
 		{[]int{}, []int{}},
@@ -83,7 +83,7 @@ func TestReverseCopy(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("Test ReverseCopy function %v", test.input), func(t *testing.T) {
-			testutil.EqualFn(t,  test.expected, ReverseCopy[int](test.input), Equal[int])
+			testutil.EqualFn(t, test.expected, ReverseCopy[int](test.input), Equal[int])
 		})
 	}
 }
@@ -91,33 +91,32 @@ func TestReverseCopy(t *testing.T) {
 func TestEqual(t *testing.T) {
 	s1 := []int{1, 2, 3}
 	if !Equal(s1, s1) {
-			t.Errorf("Equal(%v, %v) = false, want true", s1, s1)
+		t.Errorf("Equal(%v, %v) = false, want true", s1, s1)
 	}
 	s2 := []int{1, 2, 3}
 	if !Equal(s1, s2) {
-			t.Errorf("Equal(%v, %v) = false, want true", s1, s2)
+		t.Errorf("Equal(%v, %v) = false, want true", s1, s2)
 	}
 	s2 = append(s2, 4)
 	if Equal(s1, s2) {
-			t.Errorf("Equal(%v, %v) = true, want false", s1, s2)
+		t.Errorf("Equal(%v, %v) = true, want false", s1, s2)
 	}
 
 	s3 := []float64{1, 2, math.NaN()}
 	if !Equal(s3, s3) {
-			t.Errorf("Equal(%v, %v) = false, want true", s3, s3)
+		t.Errorf("Equal(%v, %v) = false, want true", s3, s3)
 	}
 
 	if Equal(s1, nil) {
-			t.Errorf("Equal(%v, nil) = true, want false", s1)
+		t.Errorf("Equal(%v, nil) = true, want false", s1)
 	}
 	if Equal(nil, s1) {
-			t.Errorf("Equal(nil, %v) = true, want false", s1)
+		t.Errorf("Equal(nil, %v) = true, want false", s1)
 	}
 	if !Equal(s1[:0], nil) {
-			t.Errorf("Equal(%v, nil = false, want true", s1[:0])
+		t.Errorf("Equal(%v, nil = false, want true", s1[:0])
 	}
 }
-
 
 func TestMap(t *testing.T) {
 	s1 := []int{1, 2, 3}
@@ -140,12 +139,12 @@ func TestMap(t *testing.T) {
 
 func TestReduce(t *testing.T) {
 	s1 := []int{1, 2, 3}
-	r := Reduce(s1, 0, func(f float64, i int) float64 { return float64(i) * 2.5 + f })
+	r := Reduce(s1, 0, func(f float64, i int) float64 { return float64(i)*2.5 + f })
 	if want := 15.0; r != want {
 		t.Errorf("Reduce(%v, 0, ...) = %v, want %v", s1, r, want)
 	}
 
-	if got := Reduce(nil, 0, func(i, j int) int { return i + j}); got != 0 {
+	if got := Reduce(nil, 0, func(i, j int) int { return i + j }); got != 0 {
 		t.Errorf("Reduce(nil, 0, add) = %v, want 0", got)
 	}
 }
