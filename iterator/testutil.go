@@ -1,7 +1,6 @@
 package iterator
 
 import (
-	"constraints"
 	"testing"
 
 	"github.com/tdakkota/algo2/slices"
@@ -35,7 +34,7 @@ type testCaseBuilder[T comparable] interface {
 	Expected() []T
 }
 
-func runTests[T constraints.Float, B testCaseBuilder[T]](tests ...B) func(t *testing.T) {
+func runTests[T comparable, B testCaseBuilder[T]](tests ...B) func(t *testing.T) {
 	return func(t *testing.T) {
 		t.Helper()
 

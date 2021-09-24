@@ -3,7 +3,6 @@ package iterator
 import (
 	"constraints"
 	"fmt"
-	"math"
 	"testing"
 )
 
@@ -34,23 +33,9 @@ func TestRange(t *testing.T) {
 		{5, 1, -1, []int{5, 4, 3, 2}},
 		{5, 1, -2, []int{5, 3}},
 	}...))
-
-	t.Run(`float`, runTests[float64, rangeTestCase[float64]]([]rangeTestCase[float64]{
-		{1, 5, 1, []float64{1, 2, 3, 4}},
-		{1, 5, 5, []float64{1}},
-		{1, 5, 2, []float64{1, 3}},
-		{1, 5, -1, nil},
-		{1, 0, -1, []float64{1}},
-		{5, 1, -1, []float64{5, 4, 3, 2}},
-		{5, 1, -2, []float64{5, 3}},
-
-		{math.NaN(), 5, 1, nil},
-		{1, math.NaN(), 1, nil},
-		{1, 5, math.NaN(), nil},
-	}...))
 }
 
-type repeatTestCase[T constraints.Real] struct {
+type repeatTestCase[T any] struct {
 	value    T
 	times    uint
 	expected []T

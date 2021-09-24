@@ -115,7 +115,7 @@ func Max[Elem constraints.Ordered](s []Elem) Elem {
 		var zero Elem
 		return zero
 	}
-	return Reduce(s[1:], s[0], alg.Max(Elem))
+	return Reduce(s[1:], s[0], alg.Max[Elem])
 }
 
 // Min returns the minimum element in a slice of some ordered type.
@@ -125,5 +125,5 @@ func Min[Elem constraints.Ordered](s []Elem) Elem {
 		var zero Elem
 		return zero
 	}
-	return Reduce(s[1:], s[0], alg.Min[Elem)
+	return Reduce(s[1:], s[0], alg.Min[Elem])
 }
