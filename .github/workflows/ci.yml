@@ -24,7 +24,7 @@ jobs:
 
       - name: Restore Go cache
         id: cache-gotip
-        uses: actions/cache@v1
+        uses: actions/cache@v2.1.6
         with:
           path: ~/gotip
           key: ${{ runner.os }}-gotip-${{ hashFiles('GO_COMMIT_HASH') }}
